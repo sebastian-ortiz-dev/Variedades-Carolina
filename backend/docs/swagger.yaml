@@ -1,0 +1,32 @@
+basePath: /api/v1
+info:
+  contact: {}
+paths:
+  /inventory/error:
+    get:
+      description: Probar handlers con grupos.
+      responses:
+        "500":
+          description: Internal Server Error
+      summary: Test error
+      tags:
+      - Test
+  /inventory/list:
+    get:
+      description: Probar handlers con grupos.
+      responses:
+        "200":
+          description: OK
+      summary: Test handler
+      tags:
+      - Test
+  /inventory/modify:
+    get:
+      description: Probar handlers con grupos.
+      responses:
+        "200":
+          description: OK
+      summary: Test handler
+      tags:
+      - Test
+swagger: "2.0"

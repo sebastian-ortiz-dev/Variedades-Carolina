@@ -1,0 +1,51 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "basePath": "/api/v1",
+    "paths": {
+        "/inventory/error": {
+            "get": {
+                "description": "Probar handlers con grupos.",
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Test error",
+                "responses": {
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/inventory/list": {
+            "get": {
+                "description": "Probar handlers con grupos.",
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Test handler",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/inventory/modify": {
+            "get": {
+                "description": "Probar handlers con grupos.",
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Test handler",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    }
+}
