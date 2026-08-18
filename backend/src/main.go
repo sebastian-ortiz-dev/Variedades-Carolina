@@ -10,6 +10,9 @@ func main(){
 	// bring the gin engine and configuration
 	r := config.Config_gin()
 
+	// Start the db connection pool
+	config.Database_init()
+
 	// routes group
 	v1 := r.Group("/api/v1")
 	{
