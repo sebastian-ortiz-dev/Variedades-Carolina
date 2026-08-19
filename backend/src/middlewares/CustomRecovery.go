@@ -15,8 +15,8 @@ func Customrecoveryjson() gin.HandlerFunc{
 
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 					"status": 500,
-					"error": "Internal Server Error",
-					"message": "Something went wrong",
+					"error": "Internal Server Error.",
+					"message": "Something went wrong.",
 				})
 			}	
 		}()

@@ -1,16 +1,38 @@
 basePath: /api/v1
+definitions:
+  variedades_carolina_src_auth_DTOs.LoginUserEntrydata:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
 info:
   contact: {}
 paths:
-  /inventory/error:
-    get:
-      description: Probar handlers con grupos.
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login of the application.
+      parameters:
+      - description: Datos del usuario
+        in: body
+        name: userdata
+        required: true
+        schema:
+          $ref: '#/definitions/variedades_carolina_src_auth_DTOs.LoginUserEntrydata'
+      produces:
+      - application/json
       responses:
-        "500":
-          description: Internal Server Error
-      summary: Test error
+        "200":
+          description: OK
+      summary: Login users
       tags:
-      - Test
+      - auth
   /inventory/list:
     get:
       description: Probar handlers con grupos.

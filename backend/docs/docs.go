@@ -15,16 +15,33 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/inventory/error": {
-            "get": {
-                "description": "Probar handlers con grupos.",
-                "tags": [
-                    "Test"
+        "/auth/login": {
+            "post": {
+                "description": "Login of the application.",
+                "consumes": [
+                    "application/json"
                 ],
-                "summary": "Test error",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login users",
+                "parameters": [
+                    {
+                        "description": "Datos del usuario",
+                        "name": "userdata",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_auth_DTOs.LoginUserEntrydata"
+                        }
+                    }
+                ],
                 "responses": {
-                    "500": {
-                        "description": "Internal Server Error"
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -54,6 +71,23 @@ const docTemplate = `{
                     "200": {
                         "description": "OK"
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "variedades_carolina_src_auth_DTOs.LoginUserEntrydata": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
                 }
             }
         }

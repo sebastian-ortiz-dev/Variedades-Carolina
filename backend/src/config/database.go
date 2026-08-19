@@ -11,6 +11,12 @@ type Db struct{
 	poolDb *pgxpool.Pool
 }
 
+func (db *Db) Getpool() *pgxpool.Pool{
+	return db.poolDb
+}
+
+var Poolglobal *Db
+
 func Database_init(){
 	c := context.Background()
 
@@ -36,9 +42,6 @@ func Database_init(){
 		panic("Error al tratar de conectar a la base de datos")
 	}
 
-	var db Db
 
-	db.poolDb = pool
-
-	defer pool.Close()
+	Poolglobal = &Db{poolDb: pool}
 }

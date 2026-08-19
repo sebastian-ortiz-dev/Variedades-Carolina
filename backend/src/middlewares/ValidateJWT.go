@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 	"variedades_carolina/src/errors"
-	"variedades_carolina/src/auth"
+	"variedades_carolina/src/secure"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -20,7 +20,7 @@ func Validatejwt() gin.HandlerFunc{
 			return 
 		}
 
-		claim := &auth.ClaimsUser{}
+		claim := &secure.ClaimsUser{}
 		
 		tokenheader := strings.TrimPrefix("Bearer", authheader)
 

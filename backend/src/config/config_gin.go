@@ -1,13 +1,14 @@
 package config
 
 import (
+	docs "variedades_carolina/docs"
+	"variedades_carolina/src/errors"
+	"variedades_carolina/src/middlewares"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"variedades_carolina/src/middlewares"
-	"variedades_carolina/src/errors"
+	"net/http"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	docs "variedades_carolina/docs"
 )
 
 func Config_gin() *gin.Engine{
@@ -37,13 +38,13 @@ func Config_gin() *gin.Engine{
 
 	// Handler route not exist. Return error 404
 	r.NoRoute(func(c *gin.Context) {
-		c.Error(&errorHttp.HttpError{Status: 404, Detail: "El recurso solicitado no existe o fue eliminado.", Codigo:"NOT_FOUND"})
+		c.Error(&errorHttp.HttpError{Status: http.StatusNotFound, Detail: "El recurso solicitado no existe o fue eliminado.", Codigo:"NOT_FOUND"})
 	})
 
 	r.HandleMethodNotAllowed = true
 	// Handler no method. Return error 405
 	r.NoMethod(func(c *gin.Context) {
-		c.Error(&errorHttp.HttpError{Status: 405, Detail: "Metodo no permitido", Codigo:"NOT_ALLOWED"})
+		c.Error(&errorHttp.HttpError{Status: http.StatusMethodNotAllowed, Detail: "Metodo no permitido", Codigo:"NOT_ALLOWED"})
 	})
 
 	// swagger endpoint

@@ -1,4 +1,4 @@
-package auth
+package secure
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func Generatetoken(id string, nombre string, correo string, rol string, imagen string) (string, error){
+func Generatetoken(id string, nombre string, correo string, rol string, imagen string) (string, time.Time, error){
 
 	claim := &ClaimsUser{UserId: id, Nombre: nombre, Correo: correo, Rol: rol, Imagen: imagen, RegisteredClaims: jwt.RegisteredClaims{
 		Subject: id,
@@ -17,7 +17,9 @@ func Generatetoken(id string, nombre string, correo string, rol string, imagen s
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 	}}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claim)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
+	expire := claim.ExpiresAt.Time
+	token_string, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 
-	return token.SignedString(os.Getenv("JWT_SECRET"))
+	return token_string, expire, err
 }
