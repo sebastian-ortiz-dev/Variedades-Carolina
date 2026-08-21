@@ -82,15 +82,15 @@ paths:
       summary: Login users get the JWT token
       tags:
       - auth
-  /inventory/list:
+  /inventory/categories:
     get:
-      description: Probar handlers con grupos.
+      description: List categories.
       responses:
         "200":
           description: OK
       security:
       - BearerAuth: []
-      summary: Test handler
+      summary: Categories
       tags:
       - Test
   /inventory/modify:

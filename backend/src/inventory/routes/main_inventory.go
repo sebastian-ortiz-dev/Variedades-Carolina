@@ -6,6 +6,7 @@ import (
 )
 
 func Registerinventory(inventorygroup *gin.RouterGroup){
-	inventorygroup.GET("/inventory/list", handlers.Listar)
+	inventorygroup.GET("/inventory/categories", handlers.ListCategories)
+	//inventorygroup.GET("/inventory/measurement-units", handlers.Listar)
 	inventorygroup.GET("/inventory/modify", handlers.Modificar)
 }

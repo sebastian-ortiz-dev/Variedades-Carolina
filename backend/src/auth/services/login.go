@@ -12,7 +12,7 @@ import (
 
 func ProcessLogin(ctx context.Context, userData *DTOs.LoginUserEntrydata) (*DTOs.LoginResponseUser, error){
 	user, rol, err := repository.GetOneUser(ctx, userData.Email)
-
+	
 	if err != nil{
 		error_http := &errorHttp.HttpError{Status: http.StatusUnauthorized, Detail: "Error, Email o contraseña invalidos.", Codigo:"UNAUTHORIZED"}
 		return nil, error_http

@@ -70,18 +70,18 @@ const docTemplate = `{
                 }
             }
         },
-        "/inventory/list": {
+        "/inventory/categories": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Probar handlers con grupos.",
+                "description": "List categories.",
                 "tags": [
                     "Test"
                 ],
-                "summary": "Test handler",
+                "summary": "Categories",
                 "responses": {
                     "200": {
                         "description": "OK"
