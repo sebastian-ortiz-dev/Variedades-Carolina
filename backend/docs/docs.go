@@ -9,7 +9,16 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -17,7 +26,7 @@ const docTemplate = `{
     "paths": {
         "/auth/login": {
             "post": {
-                "description": "Login of the application.",
+                "description": "Login of the application and get the token JWT.",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,7 +36,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Login users",
+                "summary": "Login users get the JWT token",
                 "parameters": [
                     {
                         "description": "Datos del usuario",
@@ -41,13 +50,33 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_auth_DTOs.LoginResponseUser"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
                     }
                 }
             }
         },
         "/inventory/list": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Probar handlers con grupos.",
                 "tags": [
                     "Test"
@@ -62,6 +91,11 @@ const docTemplate = `{
         },
         "/inventory/modify": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Probar handlers con grupos.",
                 "tags": [
                     "Test"
@@ -76,6 +110,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "variedades_carolina_src_auth_DTOs.LoginResponseUser": {
+            "type": "object",
+            "properties": {
+                "expirein": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "tokentype": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/variedades_carolina_src_auth_DTOs.Userdata"
+                }
+            }
+        },
         "variedades_carolina_src_auth_DTOs.LoginUserEntrydata": {
             "type": "object",
             "required": [
@@ -90,18 +141,54 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "variedades_carolina_src_auth_DTOs.Userdata": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rol": {
+                    "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_errors.HttpError": {
+            "type": "object",
+            "properties": {
+                "codigo": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Escribe 'Bearer ' seguido de tu token JWT Ejemplo: \"Bearer tokenJWT\"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1.0",
 	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "API de Variedades Carolina",
+	Description:      "Servicio backend de autenticación y gestión.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

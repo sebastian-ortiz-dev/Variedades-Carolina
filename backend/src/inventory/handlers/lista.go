@@ -6,7 +6,7 @@ import  (
 )
 
 
-// CreateUser godoc
+// @Security BearerAuth
 // @Summary      Test handler
 // @Description  Probar handlers con grupos.
 // @Tags         Test
@@ -20,7 +20,7 @@ func Listar(c *gin.Context ){
 	})
 }
 
-// CreateUser godoc
+// @Security BearerAuth
 // @Summary      Test handler
 // @Description  Probar handlers con grupos.
 // @Tags         Test

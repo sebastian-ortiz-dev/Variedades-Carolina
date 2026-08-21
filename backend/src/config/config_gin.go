@@ -1,12 +1,12 @@
 package config
 
 import (
+	"net/http"
 	docs "variedades_carolina/docs"
 	"variedades_carolina/src/errors"
 	"variedades_carolina/src/middlewares"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -20,9 +20,9 @@ func Config_gin() *gin.Engine{
 
 	// cors configuration
 	cors_config := cors.New(cors.Config{
-		AllowOrigins: []string{"https://mi-app-react"},
+		AllowOrigins: []string{"https://mi-app-react", "http://localhost:8082"},
 		AllowMethods: []string{"GET", "POST", "DELETE", "PUT", "PATCH", "HEAD", "OPTIONS"},
-		AllowHeaders: []string{"content-type", "Authorization"},
+		AllowHeaders: []string{"content-type", "Authorization", "Accept"},
 		AllowPrivateNetwork: true,
 		AllowCredentials: true,
 		AllowBrowserExtensions: true,

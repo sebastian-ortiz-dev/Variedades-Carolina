@@ -1,5 +1,16 @@
 basePath: /api/v1
 definitions:
+  variedades_carolina_src_auth_DTOs.LoginResponseUser:
+    properties:
+      expirein:
+        type: string
+      token:
+        type: string
+      tokentype:
+        type: string
+      user:
+        $ref: '#/definitions/variedades_carolina_src_auth_DTOs.Userdata'
+    type: object
   variedades_carolina_src_auth_DTOs.LoginUserEntrydata:
     properties:
       email:
@@ -10,14 +21,42 @@ definitions:
     - email
     - password
     type: object
+  variedades_carolina_src_auth_DTOs.Userdata:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      rol:
+        type: string
+    type: object
+  variedades_carolina_src_errors.HttpError:
+    properties:
+      codigo:
+        type: string
+      detail:
+        type: string
+    type: object
 info:
-  contact: {}
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Servicio backend de autenticación y gestión.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: API de Variedades Carolina
+  version: "1.0"
 paths:
   /auth/login:
     post:
       consumes:
       - application/json
-      description: Login of the application.
+      description: Login of the application and get the token JWT.
       parameters:
       - description: Datos del usuario
         in: body
@@ -29,8 +68,18 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
-      summary: Login users
+          description: ok
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_auth_DTOs.LoginResponseUser'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      summary: Login users get the JWT token
       tags:
       - auth
   /inventory/list:
@@ -39,6 +88,8 @@ paths:
       responses:
         "200":
           description: OK
+      security:
+      - BearerAuth: []
       summary: Test handler
       tags:
       - Test
@@ -48,7 +99,15 @@ paths:
       responses:
         "200":
           description: OK
+      security:
+      - BearerAuth: []
       summary: Test handler
       tags:
       - Test
+securityDefinitions:
+  BearerAuth:
+    description: 'Escribe ''Bearer '' seguido de tu token JWT Ejemplo: "Bearer tokenJWT"'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

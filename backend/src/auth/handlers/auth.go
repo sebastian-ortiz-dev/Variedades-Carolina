@@ -9,14 +9,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CreateUser godoc
-// @Summary      Login users
-// @Description  Login of the application.
+// @Summary      Login users get the JWT token
+// @Description  Login of the application and get the token JWT.
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        userdata  body      DTOs.LoginUserEntrydata  true  "Datos del usuario"
-// @Success      200
+// @Param        userdata  body    DTOs.LoginUserEntrydata  true  "Datos del usuario"
+// @Success      200	{object}   DTOs.LoginResponseUser	"ok"	
+// @Failure		 401	{object}   errorHttp.HttpError		"Unauthorized"
+// @Failure		 500	{object}   errorHttp.HttpError		"Internal server error"
 // @router		 /auth/login [POST]
 func Login(c *gin.Context){
 	ctx := c.Request.Context()
