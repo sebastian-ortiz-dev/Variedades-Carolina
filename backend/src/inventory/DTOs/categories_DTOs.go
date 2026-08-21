@@ -5,6 +5,6 @@ type CreateCategories struct{
 }
 
 type ListCategories struct{
-	Id string `json:id`
+	Id string `json:"id"`
 	Nombre string `json:"nombre"`
 }

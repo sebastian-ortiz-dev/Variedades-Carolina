@@ -5,6 +5,6 @@ type CreateMeasurentUnit struct{
 }
 
 type ListMeasurentUnit struct{
-	Id string `json:id`
+	Id string `json:"id"`
 	Nombre string `json:"nombre"`
 }
