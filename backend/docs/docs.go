@@ -78,32 +78,147 @@ const docTemplate = `{
                     }
                 ],
                 "description": "List categories.",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
-                    "Test"
+                    "Inventory"
                 ],
                 "summary": "Categories",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "ok",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListCategories"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new categorie.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Datos de la categoria",
+                        "name": "dataCategorie",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.CreateCategories"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListCategories"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
                     }
                 }
             }
         },
-        "/inventory/modify": {
+        "/inventory/measurement-units": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Probar handlers con grupos.",
-                "tags": [
-                    "Test"
+                "description": "List Measurement units.",
+                "produces": [
+                    "application/json"
                 ],
-                "summary": "Test handler",
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Measurement units",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "ok",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListMeasurentUnit"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List Measurement units.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Measurement units",
+                "parameters": [
+                    {
+                        "description": "Datos de la medida",
+                        "name": "dataMeasurent",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.CreateMeasurentUnit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListMeasurentUnit"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
                     }
                 }
             }
@@ -166,6 +281,50 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "detail": {
+                    "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.CreateCategories": {
+            "type": "object",
+            "required": [
+                "nombre"
+            ],
+            "properties": {
+                "nombre": {
+                    "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.CreateMeasurentUnit": {
+            "type": "object",
+            "required": [
+                "nombre"
+            ],
+            "properties": {
+                "nombre": {
+                    "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.ListCategories": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "nombre": {
+                    "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.ListMeasurentUnit": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "nombre": {
                     "type": "string"
                 }
             }

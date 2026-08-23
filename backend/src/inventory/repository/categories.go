@@ -1,9 +1,10 @@
 package repository
 
-import(
+import (
 	"context"
-	"variedades_carolina/src/inventory/models"
+	"time"
 	"variedades_carolina/src/config"
+	"variedades_carolina/src/inventory/models"
 )
 
 func ListCategories(ctx context.Context) (*[]models.Categories, error){
@@ -37,4 +38,21 @@ func ListCategories(ctx context.Context) (*[]models.Categories, error){
 	defer rows.Close()
 	
 	return &categories, nil
+}
+
+func CreateCategorie(ctx context.Context, id string, name string, date time.Time) (*models.Categories, error){
+	db := config.Poolglobal
+	pool := db.Getpool()
+	sql_query := `INSERT INTO inventario.categorias(id_categoria_visual, nombre, fecha_creacion) 
+	VALUES ($1, $2, $3) RETURNING id_categoria_visual, nombre`
+	
+	var categorie models.Categories
+	err := pool.QueryRow(ctx, sql_query, id, name, date).Scan(&categorie.IdCategoriesVisual, &categorie.Nombre)
+
+	if err != nil{
+		return nil, err
+	}
+
+	return &categorie, nil
+
 }

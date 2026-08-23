@@ -39,6 +39,34 @@ definitions:
       detail:
         type: string
     type: object
+  variedades_carolina_src_inventory_DTOs.CreateCategories:
+    properties:
+      nombre:
+        type: string
+    required:
+    - nombre
+    type: object
+  variedades_carolina_src_inventory_DTOs.CreateMeasurentUnit:
+    properties:
+      nombre:
+        type: string
+    required:
+    - nombre
+    type: object
+  variedades_carolina_src_inventory_DTOs.ListCategories:
+    properties:
+      id:
+        type: string
+      nombre:
+        type: string
+    type: object
+  variedades_carolina_src_inventory_DTOs.ListMeasurentUnit:
+    properties:
+      id:
+        type: string
+      nombre:
+        type: string
+    type: object
 info:
   contact:
     email: support@swagger.io
@@ -85,25 +113,98 @@ paths:
   /inventory/categories:
     get:
       description: List categories.
+      produces:
+      - application/json
       responses:
         "200":
-          description: OK
+          description: ok
+          schema:
+            items:
+              $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.ListCategories'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
       security:
       - BearerAuth: []
       summary: Categories
       tags:
-      - Test
-  /inventory/modify:
-    get:
-      description: Probar handlers con grupos.
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      description: Create a new categorie.
+      parameters:
+      - description: Datos de la categoria
+        in: body
+        name: dataCategorie
+        required: true
+        schema:
+          $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.CreateCategories'
+      produces:
+      - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.ListCategories'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
       security:
       - BearerAuth: []
-      summary: Test handler
       tags:
-      - Test
+      - Inventory
+  /inventory/measurement-units:
+    get:
+      description: List Measurement units.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            items:
+              $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.ListMeasurentUnit'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Measurement units
+      tags:
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      description: List Measurement units.
+      parameters:
+      - description: Datos de la medida
+        in: body
+        name: dataMeasurent
+        required: true
+        schema:
+          $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.CreateMeasurentUnit'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.ListMeasurentUnit'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Measurement units
+      tags:
+      - Inventory
 securityDefinitions:
   BearerAuth:
     description: 'Escribe ''Bearer '' seguido de tu token JWT Ejemplo: "Bearer tokenJWT"'

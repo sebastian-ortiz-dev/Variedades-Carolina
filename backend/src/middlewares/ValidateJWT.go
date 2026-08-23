@@ -48,14 +48,14 @@ func Validatejwt() gin.HandlerFunc{
 		erro := Jwt_errors(err)
 
 		if erro != nil {
-			fmt.Println("hola")
+			
 			c.Error(erro)
 			c.Abort()
 			return 
 		}
 
 		c.Set(claim, token)
-		fmt.Println(claim, token)
+		
 		c.Next()
 	}
 }

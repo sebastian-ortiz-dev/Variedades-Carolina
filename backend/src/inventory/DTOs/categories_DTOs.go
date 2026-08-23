@@ -1,4 +1,4 @@
-package dtos
+package DTOs
 
 type CreateCategories struct{
 	Nombre string `json:"nombre" binding:"required"`
