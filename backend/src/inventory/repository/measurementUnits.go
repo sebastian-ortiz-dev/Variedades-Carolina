@@ -1,7 +1,8 @@
 package repository
 
-import(
+import (
 	"context"
+	"fmt"
 	"time"
 	"variedades_carolina/src/config"
 	"variedades_carolina/src/inventory/models"
@@ -10,7 +11,7 @@ import(
 func ListMeasurementunits(ctx context.Context) (*[]models.Measurementunits, error){
 	db := config.Poolglobal
 	pool := db.Getpool()
-	sql_query := `SELECT id_medida_visual, nombre FROM inventario.medidas ORDER BY id_medida ASC`
+	sql_query := `SELECT id_medida_visual, nombre FROM inventario.medidas WHERE borrado=False ORDER BY id_medida ASC`
 
 	rows, err := pool.Query(ctx, sql_query)
 
@@ -55,4 +56,40 @@ func CreateMeasurementunits(ctx context.Context, id string, name string, date ti
 	}
 
 	return &measurementunit, nil
+}
+
+func UpdateMeasurentUnit(ctx context.Context, id string, name string) error{
+	db := config.Poolglobal
+	pool := db.Getpool()
+	sql_query := `UPDATE inventario.medidas SET nombre=$1 WHERE id_medida_visual=$2`
+
+	updated, err := pool.Exec(ctx, sql_query, name, id)
+
+	if err != nil{
+		return err
+	}
+
+	if updated.RowsAffected() == 0{
+		return fmt.Errorf("El recurso no fue actualizado.")
+	}
+
+	return nil
+}
+
+func DeleteteMeasurentUnit(ctx context.Context, id string) error{
+	db := config.Poolglobal
+	pool := db.Getpool()
+	sql_query := `UPDATE inventario.medidas SET borrado=True WHERE id_medida_visual=$2`
+
+	updated, err := pool.Exec(ctx, sql_query, id)
+
+	if err != nil{
+		return err
+	}
+
+	if updated.RowsAffected() == 0{
+		return fmt.Errorf("El recurso no fue borrado.")
+	}
+
+	return nil
 }

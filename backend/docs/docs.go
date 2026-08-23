@@ -146,6 +146,85 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/categories/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a categorie.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id de la categoria",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a categorie.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id de la categoria",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Datos de la categoria",
+                        "name": "dataCategorie",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.UpdateCategories"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/measurement-units": {
             "get": {
                 "security": [
@@ -213,6 +292,85 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListMeasurentUnit"
                         }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/measurement-units/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a measurent unit.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id de la medida",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a measurent unit.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id de la medida",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Datos de la medida",
+                        "name": "dataCategorie",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.UpdateMeasurentUnit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
                     },
                     "500": {
                         "description": "Internal server error",
@@ -324,6 +482,28 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "nombre": {
+                    "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.UpdateCategories": {
+            "type": "object",
+            "required": [
+                "nombre"
+            ],
+            "properties": {
+                "nombre": {
+                    "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.UpdateMeasurentUnit": {
+            "type": "object",
+            "required": [
+                "nombre"
+            ],
+            "properties": {
                 "nombre": {
                     "type": "string"
                 }

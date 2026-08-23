@@ -40,3 +40,25 @@ func CreateMeasurementunits(ctx context.Context, data *DTOs.CreateMeasurentUnit)
 
 	return measurementUnit, nil
 }
+
+func UpdateMeasurementunit(ctx context.Context,id string, data *DTOs.UpdateMeasurentUnit) error{
+	err := repository.UpdateMeasurentUnit(ctx, id, data.Nombre)
+
+	if err != nil{
+		error_http :=  &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "Ocurrio un error al actualizar la medida.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	return nil
+}
+
+func DeleteMeasurementunit(ctx context.Context, id string) error{
+	err := repository.DeleteteMeasurentUnit(ctx, id)
+
+	if err != nil{
+		error_http :=  &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "Ocurrio un error al borrar la medida.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	return nil
+}

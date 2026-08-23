@@ -67,6 +67,20 @@ definitions:
       nombre:
         type: string
     type: object
+  variedades_carolina_src_inventory_DTOs.UpdateCategories:
+    properties:
+      nombre:
+        type: string
+    required:
+    - nombre
+    type: object
+  variedades_carolina_src_inventory_DTOs.UpdateMeasurentUnit:
+    properties:
+      nombre:
+        type: string
+    required:
+    - nombre
+    type: object
 info:
   contact:
     email: support@swagger.io
@@ -157,6 +171,55 @@ paths:
       - BearerAuth: []
       tags:
       - Inventory
+  /inventory/categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a categorie.
+      parameters:
+      - description: Id de la categoria
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: no content
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      tags:
+      - Inventory
+    patch:
+      consumes:
+      - application/json
+      description: Update a categorie.
+      parameters:
+      - description: Id de la categoria
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Datos de la categoria
+        in: body
+        name: dataCategorie
+        required: true
+        schema:
+          $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.UpdateCategories'
+      responses:
+        "204":
+          description: no content
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      tags:
+      - Inventory
   /inventory/measurement-units:
     get:
       description: List Measurement units.
@@ -203,6 +266,55 @@ paths:
       security:
       - BearerAuth: []
       summary: Measurement units
+      tags:
+      - Inventory
+  /inventory/measurement-units/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a measurent unit.
+      parameters:
+      - description: Id de la medida
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: no content
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      tags:
+      - Inventory
+    patch:
+      consumes:
+      - application/json
+      description: Update a measurent unit.
+      parameters:
+      - description: Id de la medida
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Datos de la medida
+        in: body
+        name: dataCategorie
+        required: true
+        schema:
+          $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.UpdateMeasurentUnit'
+      responses:
+        "204":
+          description: no content
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
       tags:
       - Inventory
 securityDefinitions:

@@ -40,3 +40,25 @@ func CreateCategorie(ctx context.Context, data *DTOs.CreateCategories) (*DTOs.Li
 
 	return categorieCreated, nil
 }
+
+func UpdateCategorie(ctx context.Context,id string, data *DTOs.UpdateCategories) error{
+	err := repository.UpdateCategorie(ctx, id, data.Nombre)
+
+	if err != nil{
+		error_http :=  &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "Ocurrio un error al actualizar la categoria.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	return nil
+}
+
+func DeleteCategorie(ctx context.Context,id string) error{
+	err := repository.DeleteCategorie(ctx, id)
+
+	if err != nil{
+		error_http :=  &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "Ocurrio un error al borrar la categoria.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	return nil
+}

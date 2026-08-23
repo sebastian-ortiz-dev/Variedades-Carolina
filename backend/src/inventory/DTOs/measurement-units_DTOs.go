@@ -1,7 +1,11 @@
 package DTOs
 
 type CreateMeasurentUnit struct{
-	Nombre string `json:"nombre" binding:"required"`
+	Nombre string `json:"nombre,omitempty" binding:"required"`
+}
+
+type UpdateMeasurentUnit struct{
+	Nombre string `json:"nombre" binding:"required,omitempty"`
 }
 
 type ListMeasurentUnit struct{
