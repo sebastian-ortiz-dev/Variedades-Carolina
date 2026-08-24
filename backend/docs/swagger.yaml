@@ -81,6 +81,13 @@ definitions:
     required:
     - nombre
     type: object
+  variedades_carolina_src_inventory_DTOs.UpdateMinimum:
+    properties:
+      minimim_cash:
+        type: number
+    required:
+    - minimim_cash
+    type: object
 info:
   contact:
     email: support@swagger.io
@@ -315,6 +322,56 @@ paths:
             $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
       security:
       - BearerAuth: []
+      tags:
+      - Inventory
+  /inventory/settings/minimum-cash:
+    get:
+      description: List Minimum cash.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.ListMeasurentUnit'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Minimum cash.
+      tags:
+      - Inventory
+  /inventory/settings/minimum-cash/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update Minimum cash.
+      parameters:
+      - description: Id del cash
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Datos del cash
+        in: body
+        name: dataCash
+        required: true
+        schema:
+          $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.UpdateMinimum'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: no content
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Minimum cash.
       tags:
       - Inventory
 securityDefinitions:

@@ -380,6 +380,86 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/inventory/settings/minimum-cash": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List Minimum cash.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Minimum cash.",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListMeasurentUnit"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/settings/minimum-cash/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update Minimum cash.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Minimum cash.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id del cash",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Datos del cash",
+                        "name": "dataCash",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.UpdateMinimum"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -506,6 +586,17 @@ const docTemplate = `{
             "properties": {
                 "nombre": {
                     "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.UpdateMinimum": {
+            "type": "object",
+            "required": [
+                "minimim_cash"
+            ],
+            "properties": {
+                "minimim_cash": {
+                    "type": "number"
                 }
             }
         }

@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// @Security BearerAuth
+// @Security 	 BearerAuth
 // @Summary      Measurement units
 // @Description  List Measurement units.
 // @Tags         Inventory
@@ -31,7 +31,7 @@ func ListMeasurementunits(c *gin.Context){
 	c.JSON(http.StatusOK, measurements)
 }
 
-// @Security BearerAuth
+// @Security	 BearerAuth
 // @Summary      Measurement units
 // @Description  List Measurement units.
 // @Tags         Inventory
@@ -60,10 +60,10 @@ func CreateMeasurementunits(c *gin.Context){
 	c.JSON(http.StatusCreated, measurent)
 }
 
-// @Security BearerAuth
-// @Sumary	 Measurement units
-// @Description Update a measurent unit.
-// @Tags		Inventory
+// @Security	 BearerAuth
+// @Sumary		 Measurement units
+// @Description  Update a measurent unit.
+// @Tags		 Inventory
 // @Accept       json
 // @Param		 id				path   string				   true	 "Id de la medida"
 // @Param        dataCategorie  body  DTOs.UpdateMeasurentUnit  true  "Datos de la medida"
@@ -96,10 +96,10 @@ func UpdateMeasurementunit(c *gin.Context){
 	c.Status(http.StatusNoContent)
 }
 
-// @Security BearerAuth
-// @Sumary	 Measurement units
-// @Description Delete a measurent unit.
-// @Tags		Inventory
+// @Security	 BearerAuth
+// @Sumary		 Measurement units
+// @Description  Delete a measurent unit.
+// @Tags		 Inventory
 // @Accept       json
 // @Param		 id				path   string				   true	 "Id de la medida"
 // @Success      204	"no content"	

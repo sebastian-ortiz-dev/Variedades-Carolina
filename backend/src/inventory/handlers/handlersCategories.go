@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// @Security BearerAuth
+// @Security 	 BearerAuth
 // @Summary      Categories
 // @Description  List categories.
 // @Tags         Inventory
@@ -31,10 +31,10 @@ func ListCategories(c *gin.Context){
 	c.JSON(http.StatusOK, categorie)
 }
 
-// @Security BearerAuth
-// @Sumary	 Categories
-// @Description Create a new categorie.
-// @Tags	Inventory
+// @Security 	 BearerAuth
+// @Sumary	 	 Categories
+// @Description  Create a new categorie.
+// @Tags		 Inventory
 // @Accept       json
 // @Produce      json
 // @Param        dataCategorie  body    DTOs.CreateCategories  true  "Datos de la categoria"
@@ -60,10 +60,10 @@ func CreateCategorie(c *gin.Context){
 	c.JSON(http.StatusCreated, categorie)
 }
 
-// @Security BearerAuth
-// @Sumary	 Categories
-// @Description Update a categorie.
-// @Tags	Inventory
+// @Security	 BearerAuth
+// @Sumary	 	 Categories
+// @Description  Update a categorie.
+// @Tags	 	 Inventory
 // @Accept       json
 // @Param		 id				path    string				   true	 "Id de la categoria"
 // @Param        dataCategorie  body    DTOs.UpdateCategories  true  "Datos de la categoria"
@@ -96,10 +96,10 @@ func UpdateCategories(c *gin.Context){
 	c.Status(http.StatusNoContent)
 }
 
-// @Security BearerAuth
-// @Sumary	 Categories
-// @Description Delete a categorie.
-// @Tags	Inventory
+// @Security 	 BearerAuth
+// @Sumary	 	 Categories
+// @Description  Delete a categorie.
+// @Tags	 	 Inventory
 // @Accept       json
 // @Param		 id				path    string				   true	 "Id de la categoria"
 // @Success      204	"no content"	
