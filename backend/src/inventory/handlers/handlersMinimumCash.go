@@ -39,6 +39,7 @@ func GetMinimumCash(c *gin.Context){
 // @Param		 id				path   string				   true	 "Id del cash"
 // @Param        dataCash  		body   DTOs.UpdateMinimum      true  "Datos del cash"
 // @Success      204			"no content"	
+// @Failure		 400			{object}	errorHttp.HttpError		 "bad request"
 // @Failure		 500			{object}   	errorHttp.HttpError		 "Internal server error"              
 // @router		 /inventory/settings/minimum-cash/{id}  [PATCH]  
 func SetMinimumCash(c *gin.Context){

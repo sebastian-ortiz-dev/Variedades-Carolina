@@ -39,6 +39,11 @@ definitions:
       detail:
         type: string
     type: object
+  variedades_carolina_src_inventory_DTOs.AlertCount:
+    properties:
+      Alert_count:
+        type: integer
+    type: object
   variedades_carolina_src_inventory_DTOs.CreateCategories:
     properties:
       nombre:
@@ -59,6 +64,37 @@ definitions:
         type: string
       nombre:
         type: string
+    type: object
+  variedades_carolina_src_inventory_DTOs.ListInventory:
+    properties:
+      borrado:
+        type: boolean
+      cantidad:
+        type: integer
+      cantidad_minima:
+        type: integer
+      categoria:
+        type: string
+      descripcion:
+        type: string
+      fecha_creacion:
+        type: string
+      id_product_visual:
+        type: string
+      imagen:
+        type: string
+      medida:
+        type: string
+      nombre:
+        type: string
+      porcentaje_ganancia:
+        type: number
+      precio_compra:
+        type: number
+      product_codigo_barra:
+        type: string
+      ultimo_movimiento:
+        type: boolean
     type: object
   variedades_carolina_src_inventory_DTOs.ListMeasurentUnit:
     properties:
@@ -87,6 +123,27 @@ definitions:
         type: number
     required:
     - minimim_cash
+    type: object
+  variedades_carolina_src_inventory_DTOs.UpdateProduct:
+    properties:
+      cantidad_minima:
+        type: integer
+      categoria:
+        type: string
+      descripcion:
+        type: string
+      imagen:
+        type: string
+      medida:
+        type: string
+      nombre:
+        type: string
+      porcentaje_ganancia:
+        type: number
+      precio_compra:
+        type: number
+      product_codigo_barra:
+        type: string
     type: object
 info:
   contact:
@@ -324,6 +381,140 @@ paths:
       - BearerAuth: []
       tags:
       - Inventory
+  /inventory/products/{id}:
+    delete:
+      description: Delete a product by ID.
+      parameters:
+      - description: Id del producto
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: no content
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Delete a product by ID.
+      tags:
+      - Inventory
+    get:
+      description: Get a product by ID.
+      parameters:
+      - description: Id del producto
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.ListInventory'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Get a product by ID.
+      tags:
+      - Inventory
+    patch:
+      consumes:
+      - application/json
+      description: Update a product by ID.
+      parameters:
+      - description: Id del producto
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: datos del producto
+        in: body
+        name: productData
+        required: true
+        schema:
+          $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.UpdateProduct'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: no content
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Update a product by ID.
+      tags:
+      - Inventory
+  /inventory/products/alerts:
+    get:
+      description: Get products with amount minimum or less.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.AlertCount'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Get products minimum.
+      tags:
+      - Inventory
+  /inventory/products/search:
+    get:
+      description: Search a product by ID.
+      parameters:
+      - description: Término de búsqueda (código de barras, UUID o nombre)
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            items:
+              $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.ListInventory'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Search a product by ID.
+      tags:
+      - Inventory
   /inventory/settings/minimum-cash:
     get:
       description: List Minimum cash.
@@ -365,6 +556,10 @@ paths:
       responses:
         "204":
           description: no content
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
         "500":
           description: Internal server error
           schema:

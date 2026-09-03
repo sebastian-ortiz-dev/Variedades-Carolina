@@ -381,6 +381,219 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/products/alerts": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get products with amount minimum or less.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Get products minimum.",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.AlertCount"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/products/search": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Search a product by ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Search a product by ID.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Término de búsqueda (código de barras, UUID o nombre)",
+                        "name": "q",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListInventory"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/products/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a product by ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Get a product by ID.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id del producto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListInventory"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a product by ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Delete a product by ID.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id del producto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a product by ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Update a product by ID.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id del producto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "datos del producto",
+                        "name": "productData",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.UpdateProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/settings/minimum-cash": {
             "get": {
                 "security": [
@@ -451,6 +664,12 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "no content"
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
                     },
                     "500": {
                         "description": "Internal server error",
@@ -523,6 +742,14 @@ const docTemplate = `{
                 }
             }
         },
+        "variedades_carolina_src_inventory_DTOs.AlertCount": {
+            "type": "object",
+            "properties": {
+                "Alert_count": {
+                    "type": "integer"
+                }
+            }
+        },
         "variedades_carolina_src_inventory_DTOs.CreateCategories": {
             "type": "object",
             "required": [
@@ -553,6 +780,53 @@ const docTemplate = `{
                 },
                 "nombre": {
                     "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.ListInventory": {
+            "type": "object",
+            "properties": {
+                "borrado": {
+                    "type": "boolean"
+                },
+                "cantidad": {
+                    "type": "integer"
+                },
+                "cantidad_minima": {
+                    "type": "integer"
+                },
+                "categoria": {
+                    "type": "string"
+                },
+                "descripcion": {
+                    "type": "string"
+                },
+                "fecha_creacion": {
+                    "type": "string"
+                },
+                "id_product_visual": {
+                    "type": "string"
+                },
+                "imagen": {
+                    "type": "string"
+                },
+                "medida": {
+                    "type": "string"
+                },
+                "nombre": {
+                    "type": "string"
+                },
+                "porcentaje_ganancia": {
+                    "type": "number"
+                },
+                "precio_compra": {
+                    "type": "number"
+                },
+                "product_codigo_barra": {
+                    "type": "string"
+                },
+                "ultimo_movimiento": {
+                    "type": "boolean"
                 }
             }
         },
@@ -597,6 +871,38 @@ const docTemplate = `{
             "properties": {
                 "minimim_cash": {
                     "type": "number"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.UpdateProduct": {
+            "type": "object",
+            "properties": {
+                "cantidad_minima": {
+                    "type": "integer"
+                },
+                "categoria": {
+                    "type": "string"
+                },
+                "descripcion": {
+                    "type": "string"
+                },
+                "imagen": {
+                    "type": "string"
+                },
+                "medida": {
+                    "type": "string"
+                },
+                "nombre": {
+                    "type": "string"
+                },
+                "porcentaje_ganancia": {
+                    "type": "number"
+                },
+                "precio_compra": {
+                    "type": "number"
+                },
+                "product_codigo_barra": {
+                    "type": "string"
                 }
             }
         }
