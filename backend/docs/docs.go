@@ -381,6 +381,76 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/products": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a products.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Get a products.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id del producto",
+                        "name": "Q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoria",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "lowStock",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListCatalogComplete"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/products/alerts": {
             "get": {
                 "security": [
@@ -769,6 +839,55 @@ const docTemplate = `{
             "properties": {
                 "nombre": {
                     "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.GetInventoryCatalog": {
+            "type": "object",
+            "properties": {
+                "cantidad": {
+                    "type": "integer"
+                },
+                "categoria": {
+                    "type": "string"
+                },
+                "id_product_visual": {
+                    "type": "string"
+                },
+                "imagen": {
+                    "type": "string"
+                },
+                "medida": {
+                    "type": "string"
+                },
+                "nombre": {
+                    "type": "string"
+                },
+                "porcentaje_ganancia": {
+                    "type": "number"
+                },
+                "precio_compra": {
+                    "type": "number"
+                },
+                "product_codigo_barra": {
+                    "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.ListCatalogComplete": {
+            "type": "object",
+            "properties": {
+                "more": {
+                    "type": "boolean"
+                },
+                "nextCursor": {
+                    "type": "string"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.GetInventoryCatalog"
+                    }
                 }
             }
         },

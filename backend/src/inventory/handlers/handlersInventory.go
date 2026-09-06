@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"variedades_carolina/src/errors"
 	"variedades_carolina/src/inventory/DTOs"
@@ -9,6 +10,40 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
+
+// @Security 	 BearerAuth
+// @Summary      Get a products.
+// @Description  Get a products.
+// @Tags         Inventory
+// @Accept		 json
+// @Produce      json
+// @Param		 Q				query	    string				     false	"Datos de listado"
+// @Param		 parameters		query		DTOs.ListParameters		 true	"Datos de listado"
+// @Success      200			{object}	DTOs.ListCatalogComplete "ok"
+// @Failure		 400			{object}	errorHttp.HttpError		 "bad request"
+// @Failure		 500			{object}   	errorHttp.HttpError		 "Internal server error"
+// @router		 /inventory/products  [GET]
+func ListInventory(c * gin.Context){
+	ctx := c.Request.Context()
+	q := c.Query("Q")
+	if q != ""{
+		q += "%"
+	} 
+	fmt.Println(q)
+	cursor := c.Query("cursor")
+	limit := c.DefaultQuery("limit", "20")
+	categoriaUUID := c.Query("categoria")
+	lowStock := c.Query("lowStock")
+	fmt.Println(q, categoriaUUID)
+	catalogInventory, err := services.ProductCatalog(ctx, categoriaUUID, lowStock, cursor, limit, q)
+	
+	if err != nil{
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, catalogInventory)
+}
 
 // @Security 	 BearerAuth
 // @Summary      Get a product by ID.

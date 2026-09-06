@@ -3,11 +3,72 @@ package repository
 import (
 	"context"
 	"fmt"
-	"strings"
 	"variedades_carolina/src/config"
 	"variedades_carolina/src/inventory/DTOs"
 	"variedades_carolina/src/inventory/models"
 )
+
+func GetCatalogProduct(ctx context.Context, categoria string, LowStock string, cursor int, limit string, q string) (*[]models.Inventory, int, bool, error){
+	db := config.Poolglobal
+	pool := db.Getpool()
+	sql := "SELECT p.id_product, p.id_product_visual, p.product_codigo_barra, p.nombre, p.imagen, p.cantidad, p.precio_compra, p.porcentaje_ganancia, c.nombre, m.nombre FROM inventario.productos p LEFT JOIN inventario.categorias c ON p.id_categoria=c.id_categoria LEFT JOIN inventario.medidas m ON p.id_medida=m.id_medida WHERE "
+
+	has := "SELECT p.id_product_visual FROM inventario.productos p LEFT JOIN inventario.categorias c ON p.id_categoria=c.id_categoria LEFT JOIN inventario.medidas m ON p.id_medida=m.id_medida WHERE "
+	
+	queryBuild, sqlRow, dataDb, dataRow := BuildCatalogQuery(sql, has, categoria, LowStock, cursor, limit, q)
+
+	rows, err := pool.Query(ctx, queryBuild, dataDb...)
+
+	if err != nil{
+		return nil, 0, false, err
+	}
+	
+	var catalog []models.Inventory
+	for rows.Next(){
+		var product models.Inventory
+		err := rows.Scan(
+			&product.Id,
+			&product.IdVisual,
+			&product.CodeBearer,
+			&product.Nombre,
+			&product.Imagen,
+			&product.Cantidad,
+			&product.Precio_Com,
+			&product.Porcentaje_Gan,
+			&product.Categoria,
+			&product.Medida,
+		)
+
+		if err != nil{
+			return nil,  0, false, err
+		}
+
+		catalog = append(catalog, product)
+	}
+
+	if err := rows.Err(); err != nil{
+		return nil,  0, false, err
+	}
+
+	defer rows.Close()
+
+	var product string
+
+	pool.QueryRow(ctx, sqlRow, dataRow...).Scan(&product)
+
+	var hasMore bool
+	hasMore = false
+
+	if len(catalog) == 0{
+		return &catalog, 0, hasMore, nil
+	}
+
+	if catalog[len(catalog)-1].IdVisual != product{
+		hasMore = true
+	}
+
+	return &catalog, catalog[len(catalog)-1].Id, hasMore, nil
+}
 
 func GetProductById(ctx context.Context, id string) (*models.Inventory, error){
 	db := config.Poolglobal
@@ -31,65 +92,11 @@ func GetProductById(ctx context.Context, id string) (*models.Inventory, error){
 func UpdateProduct(ctx context.Context, id string, data *DTOs.UpdateProduct, id_categoria int, id_medida int) error{
 	db := config.Poolglobal
 	pool := db.Getpool()
-	amount := 1
-	var values []string
-	var dataDb []any
 	sql := "UPDATE inventario.productos SET "
 
-	if &data.CodeBearer != nil{
-		cadena := fmt.Sprintf("product_codigo_barra = $%d", amount)
-		values = append(values, cadena)
-		dataDb = append(dataDb, *data.CodeBearer)
-		amount += 1
-	} else if &data.Nombre != nil{
-		cadena := fmt.Sprintf("nombre = $%d", amount)
-		values = append(values, cadena)
-		dataDb = append(dataDb, *data.Nombre)
-		amount += 1
-	} else if &data.Imagen != nil{
-		cadena := fmt.Sprintf("imagen = $%d", amount)
-		values = append(values, cadena)
-		dataDb = append(dataDb, *data.Imagen)
-		amount += 1
-	}  else if &data.Precio_Com != nil{
-		cadena := fmt.Sprintf("precio_compra = $%d", amount)
-		values = append(values, cadena)
-		dataDb = append(dataDb, *data.Precio_Com)
-		amount += 1
-	} else if &data.Porcentaje_Gan != nil{
-		cadena := fmt.Sprintf("porcentaje_ganancia = $%d", amount)
-		values = append(values, cadena)
-		dataDb = append(dataDb, *data.Porcentaje_Gan)
-		amount += 1
-	} else if &data.Descripcion != nil{
-		cadena := fmt.Sprintf("descripcion = $%d", amount)
-		values = append(values, cadena)
-		dataDb = append(dataDb, *data.Descripcion)
-		amount += 1
-	} else if id_categoria != 0 {
-		cadena := fmt.Sprintf("id_categoria = $%d", amount)
-		values = append(values, cadena)
-		dataDb = append(dataDb, id_categoria)
-		amount += 1
-	} else if id_medida != 0 {
-		cadena := fmt.Sprintf("id_medida = $%d", amount)
-		values = append(values, cadena)
-		dataDb = append(dataDb, id_medida)
-		amount += 1
-	} else if &data.CantidadMinima != nil{
-		cadena := fmt.Sprintf("cantidad_minima = $%d", amount)
-		values = append(values, cadena)
-		dataDb = append(dataDb, *data.CantidadMinima)
-		amount += 1
-	}
+	query, dataDb := BuildUpdate(sql, id, data, id_categoria, id_medida)
 
-	cadena := fmt.Sprintf("WHERE id_product_visual=$%d", amount)
-	values = append(values, cadena)
-
-	build := strings.Join(values, ", ")
-	query := sql + build
-
-	update, err := pool.Exec(ctx, query, dataDb)
+	update, err := pool.Exec(ctx, query, dataDb...)
 
 	if err != nil{
 		return err

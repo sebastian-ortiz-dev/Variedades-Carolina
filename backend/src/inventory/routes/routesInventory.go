@@ -6,6 +6,7 @@ import(
 )
 
 func RegisterProducts(productsGroups *gin.RouterGroup){
+	productsGroups.GET("/products", handlers.ListInventory)
 	productsGroups.GET("/products/:id", handlers.GetOneProduct)
 	productsGroups.GET("/products/alerts", handlers.GetProductAlert)
 	productsGroups.GET("/products/search", handlers.SearchProductsByQ)

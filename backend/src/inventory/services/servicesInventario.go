@@ -10,6 +10,35 @@ import (
 	"variedades_carolina/src/secure"
 )
 
+func ProductCatalog(ctx context.Context, categoria string, LowStock string, cursorQ string, limit string, q string) (*DTOs.ListCatalogComplete, error){
+	cursor, _ := secure.Desencrypt(cursorQ)
+
+	products, cursor, hasMore, err := repository.GetCatalogProduct(ctx, categoria, LowStock, cursor, limit, q)
+
+	if err != nil{
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No existen los productos.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return nil, error_http
+	}
+	
+	var CatalogProducts []DTOs.GetInventoryCatalog
+
+	for _, current := range *products{
+		productCurrent := &DTOs.GetInventoryCatalog{IdVisual: current.IdVisual, CodeBearer: current.CodeBearer, Nombre: current.Nombre, Imagen: current.Imagen, Cantidad: current.Cantidad, Precio_Com: current.Precio_Com, Porcentaje_Gan: current.Porcentaje_Gan, Categoria: current.Categoria, Medida: current.Medida,}
+		CatalogProducts = append(CatalogProducts, *productCurrent)
+	}
+	
+	Newcursor, err := secure.Encrypt(cursor)
+
+	if err != nil {
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No existen los productos.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return nil, error_http
+	}
+
+	list := DTOs.ListCatalogComplete{Products: CatalogProducts, NextCursor: &Newcursor, HasMore: hasMore}
+
+	return &list, nil
+}
+
 func GetOneProduct(ctx context.Context, id string) (*DTOs.ListInventory, error){
 	product, err := repository.GetProductById(ctx, id)
 

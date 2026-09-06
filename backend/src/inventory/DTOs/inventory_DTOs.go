@@ -19,6 +19,31 @@ type ListInventory struct{
 	Borrado			bool		`json:"borrado"`
 }
 
+type GetInventoryCatalog struct{
+	IdVisual        string  	`json:"id_product_visual"`
+	CodeBearer      string  	`json:"product_codigo_barra"`
+	Nombre          string  	`json:"nombre"`
+	Imagen			string		`json:"imagen"`
+	Cantidad        int     	`json:"cantidad"`
+	Precio_Com      float64 	`json:"precio_compra"`
+	Porcentaje_Gan  float64 	`json:"porcentaje_ganancia"`
+	Categoria    	string     	`json:"categoria"`
+	Medida       	string     	`json:"medida"`
+}
+
+type ListCatalogComplete struct{
+	Products		[]GetInventoryCatalog	`json:"products"`
+	NextCursor		*string					`json:"nextCursor"`
+	HasMore			bool					`json:"more"`
+}
+
+type ListParameters struct{
+	Cursor 			*string		`json:"cursor"`
+	Limit			int			`json:"limit" binding:"required"`
+	Categoria		*string		`json:"categoria"`
+	LowStock		bool		`json:"lowStock" binding:"required"`
+}
+
 type UpdateProduct struct{
 	CodeBearer      *string  	`json:"product_codigo_barra"`
 	Nombre          *string  	`json:"nombre"`

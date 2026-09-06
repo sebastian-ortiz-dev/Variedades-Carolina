@@ -58,6 +58,38 @@ definitions:
     required:
     - nombre
     type: object
+  variedades_carolina_src_inventory_DTOs.GetInventoryCatalog:
+    properties:
+      cantidad:
+        type: integer
+      categoria:
+        type: string
+      id_product_visual:
+        type: string
+      imagen:
+        type: string
+      medida:
+        type: string
+      nombre:
+        type: string
+      porcentaje_ganancia:
+        type: number
+      precio_compra:
+        type: number
+      product_codigo_barra:
+        type: string
+    type: object
+  variedades_carolina_src_inventory_DTOs.ListCatalogComplete:
+    properties:
+      more:
+        type: boolean
+      nextCursor:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.GetInventoryCatalog'
+        type: array
+    type: object
   variedades_carolina_src_inventory_DTOs.ListCategories:
     properties:
       id:
@@ -379,6 +411,50 @@ paths:
             $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
       security:
       - BearerAuth: []
+      tags:
+      - Inventory
+  /inventory/products:
+    get:
+      consumes:
+      - application/json
+      description: Get a products.
+      parameters:
+      - description: Id del producto
+        in: query
+        name: Q
+        type: string
+      - in: query
+        name: categoria
+        type: string
+      - in: query
+        name: cursor
+        type: string
+      - in: query
+        name: limit
+        required: true
+        type: integer
+      - in: query
+        name: lowStock
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.ListCatalogComplete'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Get a products.
       tags:
       - Inventory
   /inventory/products/{id}:
