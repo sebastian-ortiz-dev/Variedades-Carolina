@@ -2,18 +2,18 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"net/http"
+	"variedades_carolina/src/config"
 	"variedades_carolina/src/errors"
 	"variedades_carolina/src/inventory/DTOs"
 	"variedades_carolina/src/inventory/repository"
 	"variedades_carolina/src/secure"
 )
 
-func ProductCatalog(ctx context.Context, categoria string, LowStock string, cursorQ string, limit string, q string) (*DTOs.ListCatalogComplete, error){
+func ProductCatalog(ctx context.Context, categoria string, cursorQ string, lowStock bool, limit string, q string) (*DTOs.ListCatalogComplete, error){
 	cursor, _ := secure.Desencrypt(cursorQ)
 
-	products, cursor, hasMore, err := repository.GetCatalogProduct(ctx, categoria, LowStock, cursor, limit, q)
+	products, cursor, hasMore, err := repository.GetCatalogProduct(ctx, categoria, lowStock, cursor, limit, q)
 
 	if err != nil{
 		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No existen los productos.", Codigo:"INTERNAL_SERVER_ERROR"}
@@ -56,7 +56,6 @@ func SearchProducts(ctx context.Context, q string) (*[]DTOs.ListInventory, error
 	products, err := repository.PorductSearch(ctx, q)
 
 	if err != nil{
-		fmt.Println(err)
 		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No existe el producto.", Codigo:"INTERNAL_SERVER_ERROR"}
 		return nil, error_http
 	}
@@ -112,4 +111,71 @@ func GetAlerMinumum(ctx context.Context) (*DTOs.AlertCount, error){
 	minimumDto := &DTOs.AlertCount{Alert: amount}
 
 	return minimumDto, nil
+}
+
+func CreateProdcut(ctx context.Context, data *DTOs.CreateMovementDTO) error{
+	imagenAux := "product_defecto.jpg"
+	db := config.Poolglobal
+	pool := db.Getpool()
+	tx, err := pool.Begin(ctx)
+
+	if err != nil {
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "Error al conectar con el servicio.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	moviment, err := repository.GetOneMoviment(ctx, data.MovementTypeID, tx)
+
+	if err != nil{
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No existe el movimiento.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	categorie, err := repository.GetOneCategorie(ctx, *data.IDCategoria, tx)
+
+	if err != nil {
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No existe la categoria.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	unidad, err := repository.GetOneMeasurentUnit(ctx, *data.IDMedida, tx)
+
+	if err != nil {
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No existe la medida.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	if data.Imagen == "" || data.Imagen == "string"{
+		data.Imagen = imagenAux
+	}
+
+	product, err := repository.InsertProduct(ctx, data, categorie.ID, unidad.ID, tx)
+
+	if err != nil {
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "Fallo al crear el producto.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	usuario, err := repository.GetOneUser(ctx, data.UserID, tx)
+
+	if err != nil{
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No existe el usuario.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	accion := repository.InsertRecord(ctx, tx, moviment.Id, product.Id, data.Quantity, usuario, data.Description)
+
+	if accion != nil{
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No se registro la accion.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	if err := tx.Commit(ctx); err != nil{
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No se ejecuto la accion.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return error_http
+	}
+
+	defer tx.Rollback(ctx)
+
+	return nil
 }

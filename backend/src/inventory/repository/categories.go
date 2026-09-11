@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	"github.com/jackc/pgx/v5"
 	"variedades_carolina/src/config"
 	"variedades_carolina/src/inventory/models"
 )
@@ -94,4 +95,17 @@ func DeleteCategorie(ctx context.Context, id string) error{
 	}
 
 	return nil
+}
+
+func GetOneCategorie(ctx context.Context, id string, pool pgx.Tx) (*models.Categories, error){
+	sql_query := `SELECT id_categoria FROM inventario.categorias WHERE id_categoria_visual = $1 AND borrado=False`
+
+	var categorie models.Categories
+	err := pool.QueryRow(ctx, sql_query, id).Scan(&categorie.ID)
+
+	if err != nil{
+		return nil, err
+	}
+
+	return &categorie, nil
 }

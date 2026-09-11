@@ -225,6 +225,88 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/historial": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of historial records.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Get historial records.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "fecha_fin",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "fecha_inicio",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "id_tipo_movimiento",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "q",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.PaginatedHistoryResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Content",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/measurement-units": {
             "get": {
                 "security": [
@@ -381,6 +463,95 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/moviments": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get list moviments.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Get moviments.",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.AllMovimients"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Execute a moviment.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Execute moviments.",
+                "parameters": [
+                    {
+                        "description": "Datos del movimiento",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.CreateMovementDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Content",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/products": {
             "get": {
                 "security": [
@@ -402,12 +573,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Id del producto",
-                        "name": "Q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "name": "categoria",
                         "in": "query"
                     },
@@ -417,7 +582,7 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "name": "limit",
                         "in": "query",
                         "required": true
@@ -427,6 +592,11 @@ const docTemplate = `{
                         "name": "lowStock",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "q",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -820,6 +990,17 @@ const docTemplate = `{
                 }
             }
         },
+        "variedades_carolina_src_inventory_DTOs.AllMovimients": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "nombre": {
+                    "type": "string"
+                }
+            }
+        },
         "variedades_carolina_src_inventory_DTOs.CreateCategories": {
             "type": "object",
             "required": [
@@ -838,6 +1019,58 @@ const docTemplate = `{
             ],
             "properties": {
                 "nombre": {
+                    "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.CreateMovementDTO": {
+            "type": "object",
+            "required": [
+                "cantidad",
+                "id_tipo_movimiento",
+                "id_usuario"
+            ],
+            "properties": {
+                "cantidad": {
+                    "type": "integer"
+                },
+                "cantidad_minima": {
+                    "type": "integer"
+                },
+                "descripcion": {
+                    "type": "string"
+                },
+                "descripcion_producto": {
+                    "type": "string"
+                },
+                "id_categoria": {
+                    "type": "string"
+                },
+                "id_medida": {
+                    "type": "string"
+                },
+                "id_producto": {
+                    "type": "string"
+                },
+                "id_tipo_movimiento": {
+                    "type": "string"
+                },
+                "id_usuario": {
+                    "type": "string"
+                },
+                "imagen": {
+                    "type": "string"
+                },
+                "nombre": {
+                    "type": "string"
+                },
+                "porcentaje_ganancia": {
+                    "type": "number"
+                },
+                "precio_compra": {
+                    "type": "number"
+                },
+                "product_codigo_barra": {
                     "type": "string"
                 }
             }
@@ -871,6 +1104,68 @@ const docTemplate = `{
                 },
                 "product_codigo_barra": {
                     "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.HistoryItemDTO": {
+            "type": "object",
+            "properties": {
+                "cantidad": {
+                    "type": "integer"
+                },
+                "descripcion": {
+                    "type": "string"
+                },
+                "fecha_hora": {
+                    "type": "string"
+                },
+                "id_historial_visual": {
+                    "type": "string"
+                },
+                "producto": {
+                    "type": "object",
+                    "properties": {
+                        "codigo_barra": {
+                            "type": "string"
+                        },
+                        "imagen": {
+                            "type": "string"
+                        },
+                        "nombre": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "tipo_movimiento": {
+                    "type": "string"
+                },
+                "usuario": {
+                    "type": "object",
+                    "properties": {
+                        "nombre": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.HistoryPaginationMeta": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "page_items_count": {
+                    "type": "integer"
+                },
+                "total_items": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
                 }
             }
         },
@@ -957,6 +1252,20 @@ const docTemplate = `{
                 },
                 "nombre": {
                     "type": "string"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.PaginatedHistoryResponseDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.HistoryItemDTO"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.HistoryPaginationMeta"
                 }
             }
         },

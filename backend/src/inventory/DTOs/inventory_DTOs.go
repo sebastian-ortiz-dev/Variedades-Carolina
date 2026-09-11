@@ -38,10 +38,11 @@ type ListCatalogComplete struct{
 }
 
 type ListParameters struct{
-	Cursor 			*string		`json:"cursor"`
-	Limit			int			`json:"limit" binding:"required"`
-	Categoria		*string		`json:"categoria"`
-	LowStock		bool		`json:"lowStock" binding:"required"`
+	Q 				string 	`form:"q"`
+	Cursor 			string		`form:"cursor"`
+	Limit			string		`form:"limit" binding:"required"`
+	Categoria		string		`form:"categoria"`
+	LowStock		*bool		`form:"lowStock" binding:"required"`
 }
 
 type UpdateProduct struct{

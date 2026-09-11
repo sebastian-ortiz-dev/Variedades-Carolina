@@ -3,12 +3,16 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
 	"variedades_carolina/src/config"
 	"variedades_carolina/src/inventory/DTOs"
 	"variedades_carolina/src/inventory/models"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
-func GetCatalogProduct(ctx context.Context, categoria string, LowStock string, cursor int, limit string, q string) (*[]models.Inventory, int, bool, error){
+func GetCatalogProduct(ctx context.Context, categoria string, LowStock bool, cursor int, limit string, q string) (*[]models.Inventory, int, bool, error){
 	db := config.Poolglobal
 	pool := db.Getpool()
 	sql := "SELECT p.id_product, p.id_product_visual, p.product_codigo_barra, p.nombre, p.imagen, p.cantidad, p.precio_compra, p.porcentaje_ganancia, c.nombre, m.nombre FROM inventario.productos p LEFT JOIN inventario.categorias c ON p.id_categoria=c.id_categoria LEFT JOIN inventario.medidas m ON p.id_medida=m.id_medida WHERE "
@@ -132,7 +136,7 @@ func PorductSearch(ctx context.Context, q string) (*[]models.Inventory, error){
 	pool := db.Getpool()
 	sql := `SELECT p.id_product_visual, p.nombre, p.imagen, p.cantidad, p.precio_compra, p.porcentaje_ganancia, c.nombre, m.nombre
 	FROM inventario.productos p LEFT JOIN inventario.categorias c ON p.id_categoria=c.id_categoria LEFT JOIN inventario.medidas m ON p.id_medida=m.id_medida
-	WHERE p.id_product_visual ILIKE $1 OR p.nombre ILIKE $1 OR p.product_codigo_barra ILIKE $1 ORDER BY p.id_product ASC`
+	WHERE p.borrado = false AND p.id_product_visual ILIKE $1 OR p.nombre ILIKE $1 OR p.product_codigo_barra ILIKE $1 ORDER BY p.id_product ASC`
 
 	rows, err := pool.Query(ctx, sql, q)
 
@@ -183,4 +187,48 @@ func GetProductMinum(ctx context.Context) (int, error){
 	}
 
 	return cantidad, nil
+}
+
+func GetProductByIdTx(ctx context.Context, id string, pool pgx.Tx) (*models.Inventory, error){
+	sql := `SELECT p.id_product, p.cantidad FROM inventario.productos p WHERE p.id_product_visual = $1 AND p.borrado = false FOR UPDATE`
+
+	var product models.Inventory
+	err := pool.QueryRow(ctx, sql, id).Scan(&product.Id, &product.Cantidad)
+
+	if err != nil{
+		return nil, fmt.Errorf("Error al obtener el producto.")
+	}
+
+	return &product, nil
+}
+
+func InsertProduct(ctx context.Context, data *DTOs.CreateMovementDTO, categoria int, medida int, pool pgx.Tx) (*models.Inventory, error){
+	sql := `INSERT INTO inventario.productos(id_product_visual, product_codigo_barra, nombre, imagen, cantidad, precio_compra, porcentaje_ganancia, descripcion, id_categoria, id_medida, cantidad_minima, fecha_creacion, borrado)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id_product`
+
+	var product models.Inventory
+
+	err := pool.QueryRow(ctx, sql, uuid.New(), data.ProductCodigoBarra, data.Nombre, data.Imagen, data.Quantity, data.PrecioCompra, data.PorcentajeGanancia, data.DescriptionPro, categoria, medida, data.CantidadMinima, time.Now(), false).Scan(&product.Id)
+
+	if err != nil{
+		return nil, err
+	}
+
+	return &product, nil
+}
+
+func UpdateQuantity(ctx context.Context, cantidad int, id int, pool pgx.Tx) error{
+	sql := "UPDATE inventario.productos SET cantidad = $1 WHERE id_product = $2"
+
+	update, err := pool.Exec(ctx, sql, cantidad, id)
+
+	if err != nil{
+		return err
+	}
+
+	if update.RowsAffected() == 0{
+		return fmt.Errorf("El recurso no fue Actualizado")
+	}
+
+	return nil
 }

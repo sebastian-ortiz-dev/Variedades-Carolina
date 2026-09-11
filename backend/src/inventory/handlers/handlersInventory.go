@@ -6,7 +6,6 @@ import (
 	"variedades_carolina/src/errors"
 	"variedades_carolina/src/inventory/DTOs"
 	"variedades_carolina/src/inventory/services"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -17,7 +16,6 @@ import (
 // @Tags         Inventory
 // @Accept		 json
 // @Produce      json
-// @Param		 Q				query	    string				     false	"Datos de listado"
 // @Param		 parameters		query		DTOs.ListParameters		 true	"Datos de listado"
 // @Success      200			{object}	DTOs.ListCatalogComplete "ok"
 // @Failure		 400			{object}	errorHttp.HttpError		 "bad request"
@@ -25,17 +23,24 @@ import (
 // @router		 /inventory/products  [GET]
 func ListInventory(c * gin.Context){
 	ctx := c.Request.Context()
-	q := c.Query("Q")
-	if q != ""{
-		q += "%"
+	var dataCatalog DTOs.ListParameters
+	if err := c.ShouldBindQuery(&dataCatalog); err != nil{
+		fmt.Println(err)
+		c.Error(&errorHttp.HttpError{Status: http.StatusBadRequest, Detail: "Los datos enviados son invalidos", Codigo: "BAD_REQUEST"})
+		return
+	}
+
+	//q := c.Query("Q")
+	if dataCatalog.Q != ""{
+		dataCatalog.Q += "%"
 	} 
-	fmt.Println(q)
-	cursor := c.Query("cursor")
-	limit := c.DefaultQuery("limit", "20")
-	categoriaUUID := c.Query("categoria")
-	lowStock := c.Query("lowStock")
-	fmt.Println(q, categoriaUUID)
-	catalogInventory, err := services.ProductCatalog(ctx, categoriaUUID, lowStock, cursor, limit, q)
+	
+	//cursor := c.Query("cursor")
+	//limit := c.DefaultQuery("limit", "20")
+	//categoriaUUID := c.Query("categoria")
+	//lowStock := c.Query("lowStock")
+
+	catalogInventory, err := services.ProductCatalog(ctx, dataCatalog.Categoria, dataCatalog.Cursor, *dataCatalog.LowStock, dataCatalog.Limit, dataCatalog.Q)
 	
 	if err != nil{
 		c.Error(err)

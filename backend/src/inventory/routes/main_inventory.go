@@ -12,6 +12,8 @@ func Registerinventory(inventorygroup *gin.RouterGroup){
 		RegisterProducts(groups)
 		RegisterCategories(groups)
 		RegisterMeasurementUnits(groups)
+		RegisterMoviments(groups)
 		RegisterMinimumCash(groups)
+		RegisterHistorial(groups)
 	}
 }

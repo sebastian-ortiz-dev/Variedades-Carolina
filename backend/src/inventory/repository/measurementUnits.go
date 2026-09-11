@@ -6,6 +6,8 @@ import (
 	"time"
 	"variedades_carolina/src/config"
 	"variedades_carolina/src/inventory/models"
+
+	"github.com/jackc/pgx/v5"
 )
 
 func ListMeasurementunits(ctx context.Context) (*[]models.Measurementunits, error){
@@ -92,4 +94,17 @@ func DeleteteMeasurentUnit(ctx context.Context, id string) error{
 	}
 
 	return nil
+}
+
+func GetOneMeasurentUnit(ctx context.Context, id string, pool pgx.Tx) (*models.Measurementunits, error){
+	sql_query := `SELECT id_medida FROM inventario.medidas WHERE id_medida_visual = $1 AND borrado=False`
+
+	var measurenmentUnit models.Measurementunits
+	err := pool.QueryRow(ctx, sql_query, id).Scan(&measurenmentUnit.ID)
+
+	if err != nil{
+		return nil, err
+	}
+
+	return &measurenmentUnit, nil
 }

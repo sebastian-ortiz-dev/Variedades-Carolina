@@ -44,6 +44,13 @@ definitions:
       Alert_count:
         type: integer
     type: object
+  variedades_carolina_src_inventory_DTOs.AllMovimients:
+    properties:
+      id:
+        type: string
+      nombre:
+        type: string
+    type: object
   variedades_carolina_src_inventory_DTOs.CreateCategories:
     properties:
       nombre:
@@ -57,6 +64,41 @@ definitions:
         type: string
     required:
     - nombre
+    type: object
+  variedades_carolina_src_inventory_DTOs.CreateMovementDTO:
+    properties:
+      cantidad:
+        type: integer
+      cantidad_minima:
+        type: integer
+      descripcion:
+        type: string
+      descripcion_producto:
+        type: string
+      id_categoria:
+        type: string
+      id_medida:
+        type: string
+      id_producto:
+        type: string
+      id_tipo_movimiento:
+        type: string
+      id_usuario:
+        type: string
+      imagen:
+        type: string
+      nombre:
+        type: string
+      porcentaje_ganancia:
+        type: number
+      precio_compra:
+        type: number
+      product_codigo_barra:
+        type: string
+    required:
+    - cantidad
+    - id_tipo_movimiento
+    - id_usuario
     type: object
   variedades_carolina_src_inventory_DTOs.GetInventoryCatalog:
     properties:
@@ -78,6 +120,46 @@ definitions:
         type: number
       product_codigo_barra:
         type: string
+    type: object
+  variedades_carolina_src_inventory_DTOs.HistoryItemDTO:
+    properties:
+      cantidad:
+        type: integer
+      descripcion:
+        type: string
+      fecha_hora:
+        type: string
+      id_historial_visual:
+        type: string
+      producto:
+        properties:
+          codigo_barra:
+            type: string
+          imagen:
+            type: string
+          nombre:
+            type: string
+        type: object
+      tipo_movimiento:
+        type: string
+      usuario:
+        properties:
+          nombre:
+            type: string
+        type: object
+    type: object
+  variedades_carolina_src_inventory_DTOs.HistoryPaginationMeta:
+    properties:
+      current_page:
+        type: integer
+      limit:
+        type: integer
+      page_items_count:
+        type: integer
+      total_items:
+        type: integer
+      total_pages:
+        type: integer
     type: object
   variedades_carolina_src_inventory_DTOs.ListCatalogComplete:
     properties:
@@ -134,6 +216,15 @@ definitions:
         type: string
       nombre:
         type: string
+    type: object
+  variedades_carolina_src_inventory_DTOs.PaginatedHistoryResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.HistoryItemDTO'
+        type: array
+      meta:
+        $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.HistoryPaginationMeta'
     type: object
   variedades_carolina_src_inventory_DTOs.UpdateCategories:
     properties:
@@ -316,6 +407,58 @@ paths:
       - BearerAuth: []
       tags:
       - Inventory
+  /inventory/historial:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of historial records.
+      parameters:
+      - in: query
+        name: fecha_fin
+        required: true
+        type: string
+      - in: query
+        name: fecha_inicio
+        required: true
+        type: string
+      - in: query
+        name: id_tipo_movimiento
+        type: string
+      - in: query
+        name: limit
+        required: true
+        type: integer
+      - in: query
+        name: page
+        required: true
+        type: integer
+      - in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.PaginatedHistoryResponseDTO'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "422":
+          description: Unprocessable Content
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Get historial records.
+      tags:
+      - Inventory
   /inventory/measurement-units:
     get:
       description: List Measurement units.
@@ -413,16 +556,68 @@ paths:
       - BearerAuth: []
       tags:
       - Inventory
+  /inventory/moviments:
+    get:
+      description: Get list moviments.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.AllMovimients'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Get moviments.
+      tags:
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      description: Execute a moviment.
+      parameters:
+      - description: Datos del movimiento
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.CreateMovementDTO'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: no content
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "422":
+          description: Unprocessable Content
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Execute moviments.
+      tags:
+      - Inventory
   /inventory/products:
     get:
       consumes:
       - application/json
       description: Get a products.
       parameters:
-      - description: Id del producto
-        in: query
-        name: Q
-        type: string
       - in: query
         name: categoria
         type: string
@@ -432,11 +627,14 @@ paths:
       - in: query
         name: limit
         required: true
-        type: integer
+        type: string
       - in: query
         name: lowStock
         required: true
         type: boolean
+      - in: query
+        name: q
+        type: string
       produces:
       - application/json
       responses:
