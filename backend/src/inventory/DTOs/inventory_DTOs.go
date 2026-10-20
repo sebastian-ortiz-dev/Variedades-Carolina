@@ -38,7 +38,7 @@ type ListCatalogComplete struct{
 }
 
 type ListParameters struct{
-	Q 				string 	`form:"q"`
+	Q 				string 		`form:"q"`
 	Cursor 			string		`form:"cursor"`
 	Limit			string		`form:"limit" binding:"required"`
 	Categoria		string		`form:"categoria"`

@@ -29,16 +29,10 @@ func ListInventory(c * gin.Context){
 		c.Error(&errorHttp.HttpError{Status: http.StatusBadRequest, Detail: "Los datos enviados son invalidos", Codigo: "BAD_REQUEST"})
 		return
 	}
-
-	//q := c.Query("Q")
+	
 	if dataCatalog.Q != ""{
 		dataCatalog.Q += "%"
 	} 
-	
-	//cursor := c.Query("cursor")
-	//limit := c.DefaultQuery("limit", "20")
-	//categoriaUUID := c.Query("categoria")
-	//lowStock := c.Query("lowStock")
 
 	catalogInventory, err := services.ProductCatalog(ctx, dataCatalog.Categoria, dataCatalog.Cursor, *dataCatalog.LowStock, dataCatalog.Limit, dataCatalog.Q)
 	

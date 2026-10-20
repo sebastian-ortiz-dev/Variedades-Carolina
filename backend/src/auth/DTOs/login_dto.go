@@ -17,6 +17,6 @@ type Userdata struct {
 type LoginResponseUser struct {
 	Token    string     `json:"token"`
 	Type     string     `json:"tokentype"`
-	ExpireIn time.Time    `json:"expirein"`
+	ExpireIn time.Time    `json:"expireIn"`
 	User     *Userdata `json:"user"`
 }

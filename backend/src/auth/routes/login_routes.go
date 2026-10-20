@@ -7,4 +7,5 @@ import(
 
 func RegisterLogin(logingroup *gin.RouterGroup){
 	logingroup.POST("/auth/login", handlers.Login)
+	logingroup.POST("/auth/logout", handlers.Logout)
 }

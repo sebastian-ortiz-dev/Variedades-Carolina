@@ -29,11 +29,6 @@ func GetHistorial(ctx context.Context, data *DTOs.HistoryQueryFilterDTO) (*DTOs.
 
 	totalPages := (total + data.Limit - 1) / data.Limit
 
-	if data.Page > totalPages{
-		error_http := &errorHttp.HttpError{Status: http.StatusNotFound, Detail: "No hay registros.", Codigo:"NOT_FOUND"}
-		return nil, error_http
-	}
-
 	offset := (data.Page - 1) * data.Limit
 
 	historial, err := repository.ListHistoryalMoviments(ctx, data, offset)

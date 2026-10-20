@@ -70,6 +70,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/logout": {
+            "post": {
+                "description": "Logout of the application and erase the token JWT.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Logout user",
+                "responses": {
+                    "200": {
+                        "description": "ok"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/categories": {
             "get": {
                 "security": [
@@ -925,7 +948,7 @@ const docTemplate = `{
         "variedades_carolina_src_auth_DTOs.LoginResponseUser": {
             "type": "object",
             "properties": {
-                "expirein": {
+                "expireIn": {
                     "type": "string"
                 },
                 "token": {

@@ -20,7 +20,7 @@ func Config_gin() *gin.Engine{
 
 	// cors configuration
 	cors_config := cors.New(cors.Config{
-		AllowOrigins: []string{"https://mi-app-react", "http://localhost:8082"},
+		AllowOrigins: []string{"https://mi-app-react", "http://localhost:8082", "http://localhost:5173"},
 		AllowMethods: []string{"GET", "POST", "DELETE", "PUT", "PATCH", "HEAD", "OPTIONS"},
 		AllowHeaders: []string{"content-type", "Authorization", "Accept"},
 		AllowPrivateNetwork: true,
