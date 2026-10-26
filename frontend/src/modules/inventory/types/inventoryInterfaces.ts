@@ -7,19 +7,19 @@ export interface ListParameters{
 } 
 
 interface GetInventoryCatalog{
-    IdVisual:        string;
-	CodeBearer:      string;
-	Nombre:          string;
-	Imagen:			 string;
-    Cantidad:        number;
-	Precio_Com:      number;
-	Porcentaje_Gan:  number;
-	Categoria:    	 string;
-	Medida:       	 string;
+    id_product_visual:        	string;
+	product_codigo_barra:     	string;
+	nombre:          			string;
+	imagen:			 			string;
+    cantidad:        			number;
+	precio_compra:      		number;
+	porcentaje_ganancia:  		number;
+	categoria:    	 			string;
+	medida:       	 			string;
 }
 
 export interface ListCatalogComplete{
-    Products:		GetInventoryCatalog[];
-	NextCursor:		string;
-	HasMore:		boolean;
+    products:		GetInventoryCatalog[];
+	nextCursor:		string;
+	more:			boolean;
 }

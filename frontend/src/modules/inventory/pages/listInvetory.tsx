@@ -1,14 +1,45 @@
-import { Search, TriangleAlert, ArrowLeft } from "lucide-react"
+import { Search, TriangleAlert, ArrowLeft, PackageSearch } from "lucide-react"
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { GetListInventory } from "../services/getInventory"
 import type { ListParameters }  from "../types/inventoryInterfaces";
+import { GetCategories } from "../services/getCategories";
+import type { ListCategories } from "../types/categories";
 
 function inventory(){
     const [lowStock, setLowStock] = useState(false)
     const [categorie, setCategorie] = useState(false)
-    var payload: ListParameters = {q: "", cursor: "", limit: 12, categoria:"", lowStock: lowStock}
-    const product = useQuery({ queryKey: ['products'], queryFn: GetListInventory(payload)})
+    const [payload, setPayload] = useState<ListParameters>({
+    q: "", 
+    cursor: "", 
+    limit: 2, 
+    categoria: "", 
+    lowStock: lowStock
+    });
+    const query = useQuery({ queryKey: ['productsList', payload], queryFn: () => GetListInventory(payload)});
+    var IsError = query.isError;
+    const loading = query.isLoading;
+    const products = query.data?.products;
+    const nextCursor = query.data?.nextCursor;
+    const hasMore = query.data?.more;
+    const listCategories = useQuery({ queryKey: ['categoriesList'], queryFn: GetCategories});
+    IsError = listCategories.isError;
+    const categories = listCategories.data
+
+    const ChangeCursor = () =>{
+        setPayload(prev => ({
+            ...prev,
+            cursor: nextCursor ?? ''
+        }));
+    }
+
+    const ChangeCategorie = (selectCategorie: string) => {
+        setPayload(prev => ({
+            ...prev,
+            categoria: selectCategorie,
+            cursor: ""
+        }));
+    }
     
     return(
         <>
@@ -34,9 +65,10 @@ function inventory(){
                         <p>Categorías</p>
                         <ArrowLeft className={"size-4.5 ml-1 mt-0.5 " + (categorie ? "-rotate-90 duration-250" : "-rotate-0 duration-250")}/>
                     </div>
-                    <div className={"absolute z-20 rounded-md bg-white mt-25 mr-32 " + (categorie ? "block" : "hidden")}>
-                        <p className="px-2 py-1">Todas las categorías</p>
-                        <p className="px-2 py-1">Snacks y Golosinas</p>
+                    <div className={"absolute z-20 rounded-md bg-white mt-60 mr-32 " + (categorie ? "block" : "hidden")}>
+                        {categories?.map((categorie: ListCategories) => (
+                            <p key={categorie.id} onClick={() => ChangeCategorie(categorie.id)} className="cursor-pointer px-2 py-1 hover:bg-gray-100 hover:duration-350">{categorie.nombre}</p>
+                        ))}
                     </div>
 
                     {/* Botón Toggle Stock Bajo (lowstock) */}
@@ -47,73 +79,86 @@ function inventory(){
                 </div>
             </div>
 
-            {/* 2. GRID DE PRODUCTOS (3 Columnas en lg) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                
-                {/* TARJETA DE PRODUCTO (Estilo Comercial) */}
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-4 flex flex-col justify-between">
-                
-                    <div>
-                        {/* Header de Tarjeta: Categoría y Cantidad en Badge */}
-                        <div className="flex justify-between items-center mb-3">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50 px-2 py-0.5 rounded-md">
-                                Snacks y Golosinas
-                            </span>
-                            <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
-                                20 Unid.
-                            </span>
-                        </div>
-
-                        {/* Placeholder / Imagen */}
-                        <div className="w-full h-28 bg-gray-50 rounded-xl mb-3 flex items-center justify-center text-3xl border border-dashed border-gray-200">
-                        🍪
-                        </div>
-
-                        {/* Nombre y Código de Barras */}
-                        <h3 className="font-bold text-gray-800 text-base leading-snug">
-                        Marilu
-                        </h3>
-                        <p className="text-xs text-gray-400 font-mono mt-0.5">
-                        Cod: 7591082010283
-                        </p>
-
-                        {/* Desglose de Costo y Ganancia */}
-                        <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between text-xs">
-                            <div>
-                                <span className="text-[10px] text-gray-400 font-bold block uppercase">Costo</span>
-                                <span className="font-semibold text-gray-600">$12.00 USD</span>
-                            </div>
-                            <div className="text-right">
-                                <span className="text-[10px] text-emerald-600 font-bold block uppercase">Ganancia (+70%)</span>
-                                <span className="font-bold text-emerald-600">+$8.40 USD</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Footer de Tarjeta: PVP Calculado Dual (USD / VES) */}
-                    <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between bg-amber-50/50 -mx-4 -mb-4 p-3 rounded-b-2xl border-t-amber-100/50">
-                        <div>
-                        <span className="text-[10px] font-bold text-amber-800 uppercase block leading-tight">PVP Venta</span>
-                        <span className="text-lg font-extrabold text-gray-900">$20.40 <span className="text-xs text-gray-500 font-bold">USD</span></span>
-                        </div>
-                        <div className="text-right">
-                        <span className="text-xs font-extrabold text-amber-900 block">744.60 VES</span>
-                        <span className="text-[9px] text-gray-400 font-medium">Tasa BCV</span>
-                        </div>
-                    </div>
-
-                </div>
-
+            {IsError && 
+            <div className="bg-red-50 p-4 rounded-2xl border border-red-200 shadow-md flex flex-col md:flex-row items-center">
+                <p className="text-md text-red-700 font-semibold">Error: {query.error?.message}</p>
             </div>
+            }
 
-            {/* 3. BOTÓN CARGAR MÁS / SPINNER (Cursor & HasMore) */}
+            {loading ? <div>cargando</div> : <p className="hidden">cargado</p>}
+            
+            {products?.length ?? 0 > 0 ? 
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {products?.map(product => (
+                        <div key={product.id_product_visual} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-4 flex flex-col justify-between">
+                        
+                            <div>
+                                {/* Header de Tarjeta: Categoría y Cantidad en Badge */}
+                                <div className="flex justify-between items-center mb-3">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50 px-2 py-0.5 rounded-md">
+                                        {product.categoria}
+                                    </span>
+                                    <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                                        {product.cantidad} Unid.
+                                    </span>
+                                </div>
+
+                                {/* Placeholder / Imagen */}
+                                <div className="w-full h-28 bg-gray-50 rounded-xl mb-3 flex items-center justify-center text-3xl border border-dashed border-gray-200">
+                                {product.imagen}
+                                </div>
+
+                                {/* Nombre y Código de Barras */}
+                                <h3 className="font-bold text-gray-800 text-base leading-snug">
+                                {product.nombre}
+                                </h3>
+                                <p className="text-xs text-gray-400 font-mono mt-0.5">
+                                Cod: {product.product_codigo_barra}
+                                </p>
+
+                                {/* Desglose de Costo y Ganancia */}
+                                <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between text-xs">
+                                    <div>
+                                        <span className="text-[10px] text-gray-400 font-bold block uppercase">Costo</span>
+                                        <span className="font-semibold text-gray-600">${product.precio_compra} USD</span>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-[10px] text-emerald-600 font-bold block uppercase">Ganancia</span>
+                                        <span className="font-bold text-emerald-600">%{product.porcentaje_ganancia}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Footer de Tarjeta: PVP Calculado Dual (USD / VES) */}
+                            <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between bg-amber-50/50 -mx-4 -mb-4 p-3 rounded-b-2xl border-t-amber-100/50">
+                                <div>
+                                    <span className="text-[10px] font-bold text-amber-800 uppercase block leading-tight">Tasa BCV</span>
+                                    <span className="text-lg font-extrabold text-gray-900">744.60 <span className="text-xs text-gray-500 font-bold">VES</span></span>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-xs font-extrabold text-amber-900 block">$20.40 USD</span>
+                                    <span className="text-[9px] text-gray-400 font-medium">PVP Venta</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    ))}
+                </div> : 
+
+
+                <div className="flex items-center-safe justify-center-safe h-80">
+                    <PackageSearch className="size-10 mr-2" />
+                    <span>No se encontraron productos.</span>
+
+                </div>}
+
+            {hasMore && 
             <div className="py-4 flex justify-center">
                 <button className="px-5 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2">
-                {/* Ejemplo de Spinner Tailwind */}
-                <div className="w-3.5 h-3.5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-                <span>Cargando más productos...</span>
+                    <div className="w-3.5 h-3.5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span>Cargando más productos...</span>
                 </button>
-            </div>
+            </div>}
 
         </div>
         </>

@@ -9,7 +9,5 @@ export const GetListInventory = async (filters: ListParameters): Promise<ListCat
       cursor: filters.cursor || "",
       limit: filters.limit || 12,
     },})
-    console.log(filters)
-    console.log(data)
     return data.data;
 };
