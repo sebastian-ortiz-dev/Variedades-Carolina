@@ -6,7 +6,7 @@ export interface ListParameters{
 	lowStock:		boolean;
 } 
 
-interface GetInventoryCatalog{
+export interface GetInventoryCatalog{
     id_product_visual:        	string;
 	product_codigo_barra:     	string;
 	nombre:          			string;
