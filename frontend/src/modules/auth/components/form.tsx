@@ -55,16 +55,16 @@ export function FormLogin(){
           <h2 className='text-xl text-center font-bold'>Acceso al Sistema</h2>
           <h2 className='text-center text-gray-600'>Ingresa tus credenciales para iniciar sessión</h2>
           <div className='text-black'>
-            <label>Correo Electrónico: </label> <br/>
+            <label htmlFor='correo'>Correo Electrónico: </label> <br/>
             <UserRound className='absolute text-gray-400 mt-2 ml-1'/>
-            <input type='text' name='correo' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-8 focus:bg-white focus:outline-amber-200' placeholder='Correo Electronico' required/>
+            <input type='text' id='correo' name='correo' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-8 focus:bg-white focus:outline-amber-200' placeholder='Correo Electronico' required/>
           </div>
 
           <div className='text-black'>
-              <label>Contraseña: </label> <br/>
+              <label htmlFor='password'>Contraseña: </label> <br/>
               <RectangleEllipsis className='absolute text-gray-400 mt-2 ml-1'/>
               {show ? <Eye onClick={changeInputType} className='absolute cursor-pointer text-gray-400 mt-2 ml-52 md:ml-90 lg:ml-90'/> : <EyeClosed onClick={changeInputType} className='absolute cursor-pointer text-gray-400 mt-2 ml-52 md:ml-90 lg:ml-90'/>}
-              <input type={type} name='password' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-8 focus:bg-white focus:outline-amber-200' placeholder='Contraseña' required/>
+              <input type={type} id='password' name='password' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-8 focus:bg-white focus:outline-amber-200' placeholder='Contraseña' required/>
           </div>
           <ButtonForm isLoading={loginMutation.isPending} />
           <div className='w-full flex p-1 bg-amber-100/95 border border-amber-400 rounded-md'>
@@ -73,7 +73,6 @@ export function FormLogin(){
               <strong>¿Olvidaste tu contraseña?</strong> Solicita autorización al dueño.
             </p>
           </div>
-          {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md'> <p> Error! correo o contraseña invalido </p></div>}
         </form>
         </>
     )

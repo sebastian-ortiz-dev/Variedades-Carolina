@@ -169,6 +169,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/categories-count": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List categories And Count the amount of products each one.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Categories Count",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListCategoriesCount"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/categories/{id}": {
             "delete": {
                 "security": [
@@ -1038,9 +1072,17 @@ const docTemplate = `{
         "variedades_carolina_src_inventory_DTOs.CreateMeasurentUnit": {
             "type": "object",
             "required": [
+                "abreviatura",
+                "codigo",
                 "nombre"
             ],
             "properties": {
+                "abreviatura": {
+                    "type": "string"
+                },
+                "codigo": {
+                    "type": "string"
+                },
                 "nombre": {
                     "type": "string"
                 }
@@ -1220,6 +1262,20 @@ const docTemplate = `{
                 }
             }
         },
+        "variedades_carolina_src_inventory_DTOs.ListCategoriesCount": {
+            "type": "object",
+            "properties": {
+                "cantidad": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "nombre": {
+                    "type": "string"
+                }
+            }
+        },
         "variedades_carolina_src_inventory_DTOs.ListInventory": {
             "type": "object",
             "properties": {
@@ -1270,6 +1326,9 @@ const docTemplate = `{
         "variedades_carolina_src_inventory_DTOs.ListMeasurentUnit": {
             "type": "object",
             "properties": {
+                "abreviatura": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -1306,9 +1365,17 @@ const docTemplate = `{
         "variedades_carolina_src_inventory_DTOs.UpdateMeasurentUnit": {
             "type": "object",
             "required": [
+                "abreviatura",
+                "codigo",
                 "nombre"
             ],
             "properties": {
+                "abreviatura": {
+                    "type": "string"
+                },
+                "codigo": {
+                    "type": "string"
+                },
                 "nombre": {
                     "type": "string"
                 }

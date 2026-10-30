@@ -13,7 +13,7 @@ import (
 func ListMeasurementunits(ctx context.Context) (*[]models.Measurementunits, error){
 	db := config.Poolglobal
 	pool := db.Getpool()
-	sql_query := `SELECT id_medida_visual, nombre FROM inventario.medidas WHERE borrado=False ORDER BY id_medida ASC`
+	sql_query := `SELECT id_medida_visual, nombre, abreviatura FROM inventario.medidas WHERE borrado=False ORDER BY id_medida ASC`
 
 	rows, err := pool.Query(ctx, sql_query)
 
@@ -27,6 +27,7 @@ func ListMeasurementunits(ctx context.Context) (*[]models.Measurementunits, erro
 		err := rows.Scan(
 			&measurement.IdMedidaVisual,
 			&measurement.Nombre,
+			&measurement.Abreviatura,
 		)
 
 		if err != nil{
@@ -35,7 +36,7 @@ func ListMeasurementunits(ctx context.Context) (*[]models.Measurementunits, erro
 
 		measurementsUnits = append(measurementsUnits, measurement)
 	}
-
+	
 	if err := rows.Err(); err != nil{
 		return nil, err
 	}
@@ -44,14 +45,14 @@ func ListMeasurementunits(ctx context.Context) (*[]models.Measurementunits, erro
 	return &measurementsUnits, nil
 }
 
-func CreateMeasurementunits(ctx context.Context, id string, name string, date time.Time) (*models.Measurementunits, error){
+func CreateMeasurementunits(ctx context.Context, id string, name string, date time.Time, abreviatura string, codigo string) (*models.Measurementunits, error){
 	db := config.Poolglobal
 	pool := db.Getpool()
-	sql_query := `INSERT INTO inventario.medidas(id_medida_visual, nombre, fecha_creacion)
-	VALUES ($1, $2, $3) RETURNING id_medida_visual, nombre`
+	sql_query := `INSERT INTO inventario.medidas(id_medida_visual, nombre, abreviatura, codigo_estandar, fecha_creacion)
+	VALUES ($1, $2, $3, $4, $5) RETURNING id_medida_visual, nombre`
 
 	var measurementunit models.Measurementunits
-	err := pool.QueryRow(ctx, sql_query, id, name, date).Scan(&measurementunit.IdMedidaVisual, &measurementunit.Nombre)
+	err := pool.QueryRow(ctx, sql_query, id, name, abreviatura, codigo, date).Scan(&measurementunit.IdMedidaVisual, &measurementunit.Nombre)
 
 	if err != nil{
 		return nil, err

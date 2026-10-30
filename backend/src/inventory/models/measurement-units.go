@@ -8,4 +8,6 @@ type Measurementunits struct {
 	Nombre             string 		`db:"Nombre" json:"Nombre"`
 	FechaCreacion      time.Time 	`db:"fecha_creacion" json:"fecha_creacion"`
 	Borrado 		   bool 		`db:"borrado" json:"borrado"`
+	Abreviatura        string 		`db:"Abreviatura" json:"Abreviatura"`
+	Codigo_estandar    string 		`db:"Codigo_estandar" json:"Codigo_estandar"`
 }

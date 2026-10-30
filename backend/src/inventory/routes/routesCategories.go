@@ -7,6 +7,7 @@ import (
 
 func RegisterCategories(categoriesGroups *gin.RouterGroup){
 	categoriesGroups.GET("/categories", handlers.ListCategories)
+	categoriesGroups.GET("/categories-count", handlers.ListCategoriesCount)
 	categoriesGroups.POST("/categories", handlers.CreateCategorie)
 	categoriesGroups.PATCH("/categories/:id", handlers.UpdateCategories)
 	categoriesGroups.DELETE("/categories/:id", handlers.DeleteCategories)

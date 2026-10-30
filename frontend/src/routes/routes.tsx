@@ -5,6 +5,7 @@ import NavbarNavegation from "../layouts/mainLayout"
 import Login from "../modules/auth/pages/LoginPage";
 import dashboard from "../pages/dashboard";
 import inventory from "../modules/inventory/pages/listInvetory"
+import categoriesAndMeasuresPage from "../modules/inventory/pages/categoriesMeasurementUnits";
 
 export const router = createBrowserRouter([
     {
@@ -13,7 +14,13 @@ export const router = createBrowserRouter([
         element: <NavbarNavegation />,
         children:[
             { index: true, path:"dashboard", Component: dashboard },
-            { path:"inventory", Component: inventory },
+            { 
+                path:"inventory", 
+                children:[
+                    {index: true, path:"list", Component: inventory},
+                    { path: "categories-measurement", Component: categoriesAndMeasuresPage},
+                ] 
+            },
         ]
     },
     {

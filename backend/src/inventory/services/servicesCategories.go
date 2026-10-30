@@ -28,6 +28,24 @@ func AllCategories(ctx context.Context) (*[]DTOs.ListCategories, error){
 	return &allCategories, nil
 }
 
+func AllCategoriesCount(ctx context.Context) (*[]DTOs.ListCategoriesCount, error){
+	categories, err := repository.ListCategoriesCount(ctx)
+	
+	if err != nil{
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No hay categorias existentes.", Codigo:"INTERNAL_SERVER_ERROR"}
+		return nil, error_http
+	}
+
+	var allCategories []DTOs.ListCategoriesCount
+	
+	for _, categorie := range *categories{
+		current := &DTOs.ListCategoriesCount{Id: categorie.IdCategoriesVisual, Nombre: categorie.Nombre, Cantidad: categorie.Count}
+		allCategories = append(allCategories, *current)
+	}
+
+	return &allCategories, nil
+}
+
 func CreateCategorie(ctx context.Context, data *DTOs.CreateCategories) (*DTOs.ListCategories, error){
 	categorie, err := repository.CreateCategorie(ctx, uuid.New().String(), data.Nombre, time.Now())
 

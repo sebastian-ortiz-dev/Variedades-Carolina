@@ -48,7 +48,7 @@ function NavBarComponent({ hidden, setHidden }: propHidden){
                         </div>
                     </div>
                     <div className={'' + (inventory ? "block" : "hidden")}>
-                        <div onClick={() => navigate("/inventory")} className='h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
+                        <div onClick={() => navigate("/inventory/list")} className='h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
                             <h2 className='ml-4'>Listado de productos</h2>
                         </div>
                         <div className='h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
@@ -57,7 +57,7 @@ function NavBarComponent({ hidden, setHidden }: propHidden){
                         <div className='h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
                             <h2 className='ml-4'>Historial de movimientos</h2>
                         </div>
-                        <div className='h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
+                        <div  onClick={() => navigate("/inventory/categories-measurement")} className='h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
                             <h2 className='ml-4'>Categorias y Medidas</h2>
                         </div>
                     </div>

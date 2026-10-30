@@ -1,8 +1,8 @@
 import { useState, useEffect , useRef } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { GetListInventory } from "../services/getInventory"
+import { GetListInventory } from "../services/inventory"
 import type { ListParameters, GetInventoryCatalog }  from "../types/inventoryInterfaces";
-import { GetCategories } from "../services/getCategories";
+import { GetCategories } from "../services/categories";
 import useIsVisible from "../hooks/itIsVisible";
 import HeaderListInventory from "../components/headerListInventory";
 import ListProducts from "../components/listProducts";

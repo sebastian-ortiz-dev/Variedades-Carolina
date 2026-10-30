@@ -9,3 +9,12 @@ type Categories struct {
 	FechaCreacion      time.Time 	`db:"fecha_creacion" json:"fecha_creacion"`
 	Borrado 			bool 		`db:"borrado" json:"borrado"`
 }
+
+type CategoriesCount struct {
+	ID                 int    		`db:"id_categoria" json:"-"`
+	IdCategoriesVisual string 		`db:"id_categoria_visual" json:"id_categoria_visual"`
+	Nombre             string 		`db:"Nombre" json:"Nombre"`
+	Count  			   int 			`db:"Count" json:"Count"`
+	FechaCreacion      time.Time 	`db:"fecha_creacion" json:"fecha_creacion"`
+	Borrado 			bool 		`db:"borrado" json:"borrado"`
+}

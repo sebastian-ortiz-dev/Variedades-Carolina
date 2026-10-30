@@ -32,6 +32,27 @@ func ListCategories(c *gin.Context){
 }
 
 // @Security 	 BearerAuth
+// @Summary      Categories Count
+// @Description  List categories And Count the amount of products each one.
+// @Tags         Inventory
+// @Produce      json
+// @Success      200	{object}   []DTOs.ListCategoriesCount	"ok"
+// @Failure		 500	{object}   errorHttp.HttpError			"Internal server error"
+// @router		 /inventory/categories-count  [get]
+func ListCategoriesCount(c *gin.Context){
+	ctx := c.Request.Context()
+
+	categorie, err := services.AllCategoriesCount(ctx)
+
+	if err != nil{
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, categorie)
+}
+
+// @Security 	 BearerAuth
 // @Sumary	 	 Categories
 // @Description  Create a new categorie.
 // @Tags		 Inventory

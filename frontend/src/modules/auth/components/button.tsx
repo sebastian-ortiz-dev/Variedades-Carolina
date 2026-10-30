@@ -1,6 +1,6 @@
 import { LogIn, LoaderCircleIcon } from 'lucide-react';
 
-export function ButtonForm({ isLoading }){
+export function ButtonForm({ isLoading }: any){
     return(
         <>
             { isLoading ? 

@@ -60,9 +60,15 @@ definitions:
     type: object
   variedades_carolina_src_inventory_DTOs.CreateMeasurentUnit:
     properties:
+      abreviatura:
+        type: string
+      codigo:
+        type: string
       nombre:
         type: string
     required:
+    - abreviatura
+    - codigo
     - nombre
     type: object
   variedades_carolina_src_inventory_DTOs.CreateMovementDTO:
@@ -179,6 +185,15 @@ definitions:
       nombre:
         type: string
     type: object
+  variedades_carolina_src_inventory_DTOs.ListCategoriesCount:
+    properties:
+      cantidad:
+        type: integer
+      id:
+        type: string
+      nombre:
+        type: string
+    type: object
   variedades_carolina_src_inventory_DTOs.ListInventory:
     properties:
       borrado:
@@ -212,6 +227,8 @@ definitions:
     type: object
   variedades_carolina_src_inventory_DTOs.ListMeasurentUnit:
     properties:
+      abreviatura:
+        type: string
       id:
         type: string
       nombre:
@@ -235,9 +252,15 @@ definitions:
     type: object
   variedades_carolina_src_inventory_DTOs.UpdateMeasurentUnit:
     properties:
+      abreviatura:
+        type: string
+      codigo:
+        type: string
       nombre:
         type: string
     required:
+    - abreviatura
+    - codigo
     - nombre
     type: object
   variedades_carolina_src_inventory_DTOs.UpdateMinimum:
@@ -371,6 +394,27 @@ paths:
             $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
       security:
       - BearerAuth: []
+      tags:
+      - Inventory
+  /inventory/categories-count:
+    get:
+      description: List categories And Count the amount of products each one.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            items:
+              $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.ListCategoriesCount'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Categories Count
       tags:
       - Inventory
   /inventory/categories/{id}:

@@ -12,3 +12,9 @@ type ListCategories struct{
 	Id string `json:"id"`
 	Nombre string `json:"nombre"`
 }
+
+type ListCategoriesCount struct{
+	Id string `json:"id"`
+	Nombre string `json:"nombre"`
+	Cantidad int `json:"cantidad"`
+}

@@ -13,7 +13,7 @@ import (
 
 func AllMeasurementunits(ctx context.Context) (*[]DTOs.ListMeasurentUnit, error){
 	measurements, err := repository.ListMeasurementunits(ctx)
-
+	
 	if err != nil {
 		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No hay medidas existentes", Codigo:"INTERNAL_SERVER_ERROR"}
 		return nil, error_http
@@ -21,7 +21,7 @@ func AllMeasurementunits(ctx context.Context) (*[]DTOs.ListMeasurentUnit, error)
 
 	var ListMeasurement []DTOs.ListMeasurentUnit
 	for _, measurement := range *measurements{
-		currentMeasurement := &DTOs.ListMeasurentUnit{Id: measurement.IdMedidaVisual, Nombre: measurement.Nombre}
+		currentMeasurement := &DTOs.ListMeasurentUnit{Id: measurement.IdMedidaVisual, Nombre: measurement.Nombre, Abreviatura: measurement.Abreviatura}
 		ListMeasurement = append(ListMeasurement, *currentMeasurement)
 	}
 
@@ -29,7 +29,7 @@ func AllMeasurementunits(ctx context.Context) (*[]DTOs.ListMeasurentUnit, error)
 }
 
 func CreateMeasurementunits(ctx context.Context, data *DTOs.CreateMeasurentUnit) (*DTOs.ListMeasurentUnit, error){
-	measurement, err := repository.CreateMeasurementunits(ctx, uuid.New().String(), data.Nombre, time.Now())
+	measurement, err := repository.CreateMeasurementunits(ctx, uuid.New().String(), data.Nombre, time.Now(), data.Abreviatura, data.Codigo)
 
 	if err != nil{
 		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "Ocurrio un error al crear la medida.", Codigo:"INTERNAL_SERVER_ERROR"}

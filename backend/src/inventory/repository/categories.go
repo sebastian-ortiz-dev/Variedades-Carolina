@@ -42,6 +42,40 @@ func ListCategories(ctx context.Context) (*[]models.Categories, error){
 	return &categories, nil
 }
 
+func ListCategoriesCount(ctx context.Context) (*[]models.CategoriesCount, error){
+	db := config.Poolglobal
+	pool := db.Getpool()
+	sql_query := `SELECT c.id_categoria_visual, c.nombre, count(p.id_product) FILTER (WHERE p.borrado=false) FROM inventario.categorias c LEFT JOIN inventario.productos p ON c.id_categoria=p.id_categoria WHERE c.borrado= false GROUP BY c.id_categoria ORDER BY c.id_categoria ASC`
+
+	rows, err := pool.Query(ctx, sql_query)
+
+	if err != nil{
+		return nil, err
+	}
+	
+	var categories []models.CategoriesCount
+	for rows.Next(){
+		var catego models.CategoriesCount
+		err := rows.Scan(
+			&catego.IdCategoriesVisual,
+			&catego.Nombre,
+			&catego.Count,
+		)
+		if err != nil{
+			return nil, err
+		}
+		categories = append(categories, catego)
+	}
+
+	if err := rows.Err(); err != nil{
+		return nil, err
+	}
+
+	defer rows.Close()
+	
+	return &categories, nil
+}
+
 func CreateCategorie(ctx context.Context, id string, name string, date time.Time) (*models.Categories, error){
 	db := config.Poolglobal
 	pool := db.Getpool()

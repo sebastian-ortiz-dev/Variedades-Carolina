@@ -1,14 +1,19 @@
 package DTOs
 
 type CreateMeasurentUnit struct{
-	Nombre string `json:"nombre,omitempty" binding:"required"`
+	Nombre 			string `json:"nombre,omitempty" binding:"required"`
+	Abreviatura		string `json:"abreviatura"  binding:"required"`
+	Codigo			string `json:"codigo" binding:"required"`
 }
 
 type UpdateMeasurentUnit struct{
 	Nombre string `json:"nombre" binding:"required,omitempty"`
+	Abreviatura		string `json:"abreviatura"  binding:"required"`
+	Codigo			string `json:"codigo" binding:"required"`
 }
 
 type ListMeasurentUnit struct{
-	Id string `json:"id"`
-	Nombre string `json:"nombre"`
+	Id 			string `json:"id"`
+	Nombre 		string `json:"nombre"`
+	Abreviatura	string `json:"abreviatura"`
 }
