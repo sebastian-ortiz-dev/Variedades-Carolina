@@ -61,12 +61,13 @@ func CreateMeasurementunits(ctx context.Context, id string, name string, date ti
 	return &measurementunit, nil
 }
 
-func UpdateMeasurentUnit(ctx context.Context, id string, name string) error{
+func UpdateMeasurentUnit(ctx context.Context, id string, name string, abreviatura string, codigo_estandar string) error{
 	db := config.Poolglobal
 	pool := db.Getpool()
-	sql_query := `UPDATE inventario.medidas SET nombre=$1 WHERE id_medida_visual=$2`
+	sql := `UPDATE inventario.medidas `
+	sql_query, parameters := BuildUpdateMedida(sql, id, name, abreviatura, codigo_estandar)
 
-	updated, err := pool.Exec(ctx, sql_query, name, id)
+	updated, err := pool.Exec(ctx, sql_query, parameters...)
 
 	if err != nil{
 		return err
@@ -82,7 +83,7 @@ func UpdateMeasurentUnit(ctx context.Context, id string, name string) error{
 func DeleteteMeasurentUnit(ctx context.Context, id string) error{
 	db := config.Poolglobal
 	pool := db.Getpool()
-	sql_query := `UPDATE inventario.medidas SET borrado=True WHERE id_medida_visual=$2`
+	sql_query := `UPDATE inventario.medidas SET borrado=True WHERE id_medida_visual=$1`
 
 	updated, err := pool.Exec(ctx, sql_query, id)
 

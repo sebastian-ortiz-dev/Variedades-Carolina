@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from "@tanstack/react-query"
 import { ChevronDown, ChevronUp, Plus, Pencil, Trash2, Banknote, Layers, Ruler, AlertCircle, X } from 'lucide-react';
-import type { ListCategoriesCount, CreateCategorieI, UpdateCategorieI } from '../types/categories';
-import type { UnitOfMeasure, CreateunitOfMeasure } from '../types/measurementUnits';
+import type { ListCategoriesCount, CreateCategorieI, UpdateCategorieI, DeleteCategorieI } from '../types/categories';
+import type { UnitOfMeasure, CreateunitOfMeasure, DeleteunitOfMeasure, UpdateunitOfMeasure } from '../types/measurementUnits';
 import type { listCash, updateCash } from '../types/minimumCash';
-import { GetCategoriesCount, PostCreateCategorie } from '../services/categories';
-import { GetMeasurements, PostMeasurements } from '../services/measurementUnits';
+import { GetCategoriesCount, PostCreateCategorie, PathcUpdateCategorie, ADeleteCategorie } from '../services/categories';
+import { GetMeasurements, PostMeasurements, PathcUpdateMeasurements , DeleteMeasurements } from '../services/measurementUnits';
 import { GetMinimumCash, PatchMinimumCash } from '../services/minimumCashService';
 import Button from '../components/button';
 import Confirmation from '../components/confirmation';
@@ -19,8 +19,14 @@ function categoriesAndMeasuresPage(){
     const [selectedCategorieCreate, setSelectedCategorieCreate] = useState(false);
     const [selectedMeasurementCreate, setSelectedMeasurementCreate] = useState(false);
     const [selectedCategorieUpdate, setSelectedCategorieUpdate] = useState<ListCategoriesCount>();
+    const [selectedCategorieDelete, setSelectedCategorieDelete] = useState<ListCategoriesCount>();
+    const [selectedMeasureUpdate, setSelectedMeasureUpdate] = useState<UnitOfMeasure>();
+    const [selectedMeasureDelete, setSelectedMeasureDelete] = useState<UnitOfMeasure>();
     const [confirmation, setConfirmation] = useState(false);
     const [confirmationC, setConfirmationC] = useState(false);
+    const [confirmationCD, setConfirmationCD] = useState(false);
+    const [confirmationM, setConfirmationM] = useState(false);
+    const [confirmationMD, setConfirmationMD] = useState(false);
     const [isMeasuresOpen, setIsMeasuresOpen] = useState(true);
     const [categories, setCategories] = useState<ListCategoriesCount[]>([]);
     const [measures, setMeasures] = useState<UnitOfMeasure[]>([]);
@@ -36,7 +42,11 @@ function categoriesAndMeasuresPage(){
     const listMeasurementUnits = useQuery({queryKey: ['measurement', measures], queryFn: () => GetMeasurements()})
     const listCash = useQuery({queryKey: ['cash', cash], queryFn: () => GetMinimumCash()})
     const mutationCreateCategorie = useMutation({ mutationFn: PostCreateCategorie })
+    const mutationUpdateCategorie = useMutation({ mutationFn: PathcUpdateCategorie })
+    const mutationDeleteCategorie = useMutation({ mutationFn: ADeleteCategorie })
     const mutationCreateMeasurement = useMutation({ mutationFn: PostMeasurements })
+    const mutationUpdateMeasurement = useMutation({ mutationFn: PathcUpdateMeasurements })
+    const mutationDeleteMeasurement = useMutation({ mutationFn: DeleteMeasurements })
     const mutationCash = useMutation({ mutationFn: PatchMinimumCash })
 
     useEffect(() => {
@@ -71,16 +81,70 @@ function categoriesAndMeasuresPage(){
 
     }
 
-    const UpdateCategorie = async (e: React.SubmitEvent) => {
+    const UpdateCategorieConfirm = async (e: React.SubmitEvent) => {
         e.preventDefault();
         const form = e.target;
         const formData = new FormData(form);
         setForm(formData);
         setText("Esta seguro de cambiar el nombre de la categoria? (Esto Afectara a los productos que pertenecen a la categoria)");
-
-        setConfirmation(true);
+        
+        setConfirmationC(true);
     }
 
+    const UpdaCategorie = async () => {
+        setConfirmationC(false);
+        const formData = form;
+        const id = formData?.get("id_categorie")?.toString() ?? "";
+        const categoriaNombre = formData?.get("categorie_name")?.toString() ?? "";
+
+        if(categoriaNombre.length < 3 || id == ""){
+            setError(true);
+            return;
+        }
+
+        const payload: UpdateCategorieI = {id: id, nombre: categoriaNombre}
+
+        try{
+            setError(false);
+            await mutationUpdateCategorie.mutateAsync(payload);
+            setCategories([]);
+            setSelectedCategorieUpdate(undefined)
+        } catch(error: any){
+            setError(true);
+        }
+    }
+
+    const DeleteCategorieConfirm = async (e: React.SubmitEvent) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        setForm(formData);
+        setText("Esta seguro de eliminar la categoria?");
+        
+        setConfirmationCD(true);
+    }
+
+    const DeleteCategorie = async () => {
+        setConfirmationCD(false);
+        const formData = form;
+        const id = formData?.get("id_categorie")?.toString() ?? "";
+
+        if(id == ""){
+            setError(true);
+            return;
+        }
+
+        const payload: DeleteCategorieI= {id: id}
+
+        try{
+            setError(false);
+            await mutationDeleteCategorie.mutateAsync(payload);
+            setCategories([]);
+            setSelectedCategorieDelete(undefined)
+        } catch(error: any){
+            setError(true);
+        }
+    }
 
     const createNewMeasurement = async (e: React.SubmitEvent) => {
         e.preventDefault();
@@ -110,6 +174,73 @@ function categoriesAndMeasuresPage(){
 
     }
 
+    const UpdateMeasureConfirm = async (e: React.SubmitEvent) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        setForm(formData);
+        setText("Esta seguro de modificar la Medida?");
+        
+        setConfirmationM(true);
+    }
+
+    const UpdateMeasurement = async () => {
+        setConfirmationM(false);
+        const formData = form;
+        const id = formData?.get("id_measurement")?.toString() ?? "";
+        const nombre = formData?.get("measurement_name")?.toString() ?? "";
+        const abreviatura = formData?.get("abbreviate")?.toString() ?? "";
+        const codigo = formData?.get("code")?.toString() ?? "";
+
+        if(id == ""){
+            setError(true);
+            return;
+        }
+
+        const payload: UpdateunitOfMeasure = {id: id, nombre: nombre, abreviatura: abreviatura, codigo: codigo}
+
+        try{
+            setError(false);
+            await mutationUpdateMeasurement.mutateAsync(payload);
+            setMeasures([]);
+            setSelectedMeasureUpdate(undefined)
+        } catch(error: any){
+            setError(true);
+        }
+    }
+
+    const DeleteMeasureConfirm = async (e: React.SubmitEvent) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        setForm(formData);
+        setText("Esta seguro de eliminar la Medida?");
+        
+        setConfirmationMD(true);
+    }
+
+    const DeleteMeasurement = async () => {
+        setConfirmationMD(false);
+        const formData = form;
+        const id = formData?.get("id_measurement")?.toString() ?? "";
+
+        if(id == ""){
+            setError(true);
+            return;
+        }
+
+        const payload: DeleteunitOfMeasure = {id: id}
+
+        try{
+            setError(false);
+            await mutationDeleteMeasurement.mutateAsync(payload);
+            setMeasures([]);
+            setSelectedMeasureDelete(undefined)
+        } catch(error: any){
+            setError(true);
+        }
+    }
+
     const confirmationUpdateCash = async () => {
         setConfirmation(false)
         const formData = form;
@@ -129,7 +260,6 @@ function categoriesAndMeasuresPage(){
             setCash(undefined);
             setIsEditingBill(false);
         } catch(error: any){
-            console.log(error)
             setErrorHeaderCash(true);
         }
     }
@@ -140,7 +270,6 @@ function categoriesAndMeasuresPage(){
         const formData = new FormData(form);
         setForm(formData);
         setText("Esta seguro de cambiar el billete minimo? (Esto Afectara a como se sacan los precios en los productos)");
-
         setConfirmation(true);
     }
 
@@ -294,6 +423,7 @@ function categoriesAndMeasuresPage(){
                                     <Pencil className="w-4 h-4" />
                                 </button>
                                 <button 
+                                    onClick={() => setSelectedCategorieDelete(cat)}
                                     title="Eliminar Categoría"
                                     className="cursor-pointer p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                                 >
@@ -356,12 +486,14 @@ function categoriesAndMeasuresPage(){
 
                             <div className="flex items-center gap-1">
                                 <button 
+                                    onClick={() => setSelectedMeasureUpdate(m)}
                                     title="Editar Medida"
                                     className="cursor-pointer p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                 >
                                     <Pencil className="w-3.5 h-3.5" />
                                 </button>
                                 <button 
+                                    onClick={() => setSelectedMeasureDelete(m)}
                                     title="Eliminar Medida"
                                     className="cursor-pointer p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                                 >
@@ -396,13 +528,38 @@ function categoriesAndMeasuresPage(){
                             </div>
                             <Button loading={mutationCreateCategorie.isPending} textLoad='Creando...' text='Crear Categoria' />
                         </form>
-                        {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al crear la categoria </p></div>}
+                        {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al tratar de crear la categoria </p></div>}
+                    </div>
+                </div>
+            )}
+
+            {selectedCategorieDelete && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-40">
+                    <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-5 space-y-4 border">
+                        <div className="flex justify-between items-center border-b pb-2">
+                            <div>
+                                <h3 className="font-mono font-bold text-lg text-slate-800">Eliminar Categoria</h3>
+                            </div>
+                            <span onClick={() => setSelectedCategorieDelete(undefined)} className="text-slate-400 cursor-pointer hover:text-slate-600 font-bold">
+                                <X />
+                            </span>
+                        </div>
+
+                        <form onSubmit={DeleteCategorieConfirm} method='POST'>
+                            <div className='text-black mb-5'>
+                                <input type='hidden' name='id_categorie' value={selectedCategorieDelete.id} readOnly/>
+                                <label htmlFor='categorie_name'>Nombre: </label> <br/>
+                                <input type='text' name='categorie_name' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 focus:bg-white focus:outline-amber-200' value={selectedCategorieDelete.nombre} placeholder='Nombre de categoria' readOnly/>
+                            </div>
+                            <Button loading={mutationCreateCategorie.isPending} textLoad='Borrando...' text='Borrar Categoria' />
+                        </form>
+                        {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al tratar de borrar la categoria </p></div>}
                     </div>
                 </div>
             )}
 
             {selectedCategorieUpdate && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-40">
                     <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-5 space-y-4 border">
                         <div className="flex justify-between items-center border-b pb-2">
                             <div>
@@ -413,14 +570,15 @@ function categoriesAndMeasuresPage(){
                             </span>
                         </div>
 
-                        <form onSubmit={createNewCategorie} method='POST'>
+                        <form onSubmit={UpdateCategorieConfirm} method='POST'>
                             <div className='text-black mb-5'>
+                                <input type='hidden' name='id_categorie' value={selectedCategorieUpdate.id} readOnly/>
                                 <label htmlFor='categorie_name'>Nombre: </label> <br/>
                                 <input type='text' name='categorie_name' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 focus:bg-white focus:outline-amber-200' placeholder='Nombre de categoria' required/>
                             </div>
-                            <Button loading={mutationCreateCategorie.isPending} textLoad='Actualizando...' text='Actualizar Categoria' />
+                            <Button loading={mutationUpdateCategorie.isPending} textLoad='Actualizando...' text='Actualizar Categoria' />
                         </form>
-                        {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al crear la categoria </p></div>}
+                        {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al actualizar la categoria </p></div>}
                     </div>
                 </div>
             )}
@@ -457,7 +615,74 @@ function categoriesAndMeasuresPage(){
                 </div>
             )}
 
+            {selectedMeasureUpdate && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-5 space-y-4 border">
+                        <div className="flex justify-between items-center border-b pb-2">
+                            <div>
+                                <h3 className="font-mono font-bold text-lg text-slate-800">Modificar Unidad Medida</h3>
+                            </div>
+                            <span onClick={() => setSelectedMeasureUpdate(undefined)} className="text-slate-400 cursor-pointer hover:text-slate-600 font-bold">
+                                <X />
+                            </span>
+                        </div>
+
+                        <form onSubmit={UpdateMeasureConfirm} method='POST'>
+                            <input type='hidden' name='id_measurement' value={selectedMeasureUpdate.id} readOnly/>
+                            <div className='text-black mb-5'>
+                                <label htmlFor='measurement_name'>Nombre: </label> <br/>
+                                <input type='text' id='measurement_name' name='measurement_name' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 focus:bg-white focus:outline-amber-200' placeholder='Nombre de la medida'/>
+                            </div>
+                             <div className='text-black mb-5'>
+                                <label htmlFor='abbreviate'>Abreviatura: </label> <br/>
+                                <input type='text' id='abbreviate' name='abbreviate' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 focus:bg-white focus:outline-amber-200' placeholder='abreviatura de la medida'/>
+                            </div>
+                            <div className='text-black mb-5'>
+                                <label htmlFor='code'>Codigo: </label> <br/>
+                                <input type='text' id='code' name='code' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 focus:bg-white focus:outline-amber-200' placeholder='Codigo estandar'/>
+                            </div>
+                            <Button loading={mutationUpdateCategorie.isPending} textLoad='MOdificando...' text='Modificar unidad de medida' />
+                            {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al eliminar la unidad de medida </p></div>}
+                        </form>
+                    </div>
+                </div>
+            )}
+
+
+            {selectedMeasureDelete && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-5 space-y-4 border">
+                        <div className="flex justify-between items-center border-b pb-2">
+                            <div>
+                                <h3 className="font-mono font-bold text-lg text-slate-800">Eliminar Unidad Medida</h3>
+                            </div>
+                            <span onClick={() => setSelectedMeasureDelete(undefined)} className="text-slate-400 cursor-pointer hover:text-slate-600 font-bold">
+                                <X />
+                            </span>
+                        </div>
+
+                        <form onSubmit={DeleteMeasureConfirm} method='POST'>
+                            <input type='hidden' name='id_measurement' value={selectedMeasureDelete.id} readOnly/>
+                            <div className='text-black mb-5'>
+                                <label htmlFor='measurement_name'>Nombre: </label> <br/>
+                                <input type='text' id='measurement_name' name='measurement_name' value={selectedMeasureDelete.nombre} className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 focus:bg-white focus:outline-amber-200' placeholder='Nombre de la medida' readOnly/>
+                            </div>
+                            <div className='text-black mb-5'>
+                                <label htmlFor='abbreviate'>Abreviatura: </label> <br/>
+                                <input type='text' id='abbreviate' name='abbreviate' value={selectedMeasureDelete.abreviatura} className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 focus:bg-white focus:outline-amber-200' placeholder='abreviatura de la medida' readOnly/>
+                            </div>
+                            <Button loading={mutationDeleteCategorie.isPending} textLoad='Eliminando...' text='Eliminar unidad de medida' />
+                            {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al eliminar la unidad de medida </p></div>}
+                        </form>
+                    </div>
+                </div>
+            )}
+
             <Confirmation confirmation={confirmation} text={text} confirmationUpdateCash={confirmationUpdateCash} setConfirmation={setConfirmation}/>
+            <Confirmation confirmation={confirmationC} text={text} confirmationUpdateCash={UpdaCategorie} setConfirmation={setConfirmationC}/>
+            <Confirmation confirmation={confirmationCD} text={text} confirmationUpdateCash={DeleteCategorie} setConfirmation={setConfirmationCD}/>
+            <Confirmation confirmation={confirmationM} text={text} confirmationUpdateCash={UpdateMeasurement} setConfirmation={setConfirmationM}/>
+            <Confirmation confirmation={confirmationMD} text={text} confirmationUpdateCash={DeleteMeasurement} setConfirmation={setConfirmationMD}/>
         </div>
     );
 };

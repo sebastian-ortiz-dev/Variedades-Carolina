@@ -1,5 +1,5 @@
 import { ApiClient } from "../../../config/axiosConfig";
-import type { ListCategories, ListCategoriesCount, CreateCategorieI, UpdateCategorieI } from "../types/categories";
+import type { ListCategories, ListCategoriesCount, CreateCategorieI, UpdateCategorieI,  DeleteCategorieI } from "../types/categories";
 
 export const GetCategories = async (): Promise<ListCategories[]> => {
     const data = await ApiClient.get<ListCategories[]>("/inventory/categories");
@@ -18,5 +18,10 @@ export const PostCreateCategorie = async (nombre: CreateCategorieI) =>    {
 
 export const PathcUpdateCategorie = async (payload: UpdateCategorieI) =>    {
     const data = await ApiClient.patch(`/inventory/categories/${payload.id}`, {nombre: payload.nombre});
+    return data;
+}
+
+export const ADeleteCategorie = async (payload: DeleteCategorieI) =>    {
+    const data = await ApiClient.delete(`/inventory/categories/${payload.id}`);
     return data;
 }

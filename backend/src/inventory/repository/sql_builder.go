@@ -1,9 +1,10 @@
 package repository
 
-import(
-	"strings"
+import (
 	"fmt"
+	"strings"
 	"variedades_carolina/src/inventory/DTOs"
+
 )
 
 func BuildCatalogQuery(query string, queryHas string, categoria string, LowStock bool, cursor int, limit string, q string) (sqlBuild string, sqlRow string, sqlData []any, rowData []any){
@@ -125,4 +126,37 @@ func BuildUpdate(sql string, id string, data *DTOs.UpdateProduct, id_categoria i
 
 
 	return queryNew, dataDb
+}
+
+func BuildUpdateMedida(sql string, id string, nombre string, abreviatura string, codigo_estandar string) (sqlBuild string, dataDbNew []any) {
+    amount := 1
+    var values []string
+    var dataDb []any
+
+    if nombre != "" {
+        cadena := fmt.Sprintf("nombre = $%d", amount)
+        values = append(values, cadena)
+        dataDb = append(dataDb, nombre)
+        amount += 1
+    }
+    if abreviatura != "" {
+        cadena := fmt.Sprintf("abreviatura = $%d", amount)
+        values = append(values, cadena)
+        dataDb = append(dataDb, abreviatura)
+        amount += 1
+    }
+    if codigo_estandar != "" {
+        cadena := fmt.Sprintf("codigo_estandar = $%d", amount)
+        values = append(values, cadena)
+        dataDb = append(dataDb, codigo_estandar)
+        amount += 1
+    }
+
+    cadena := fmt.Sprintf(" WHERE id_medida_visual = $%d", amount)
+    dataDb = append(dataDb, id)
+
+    build := strings.Join(values, ", ")
+    queryNew := sql + " SET " + build + cadena
+
+    return queryNew, dataDb
 }

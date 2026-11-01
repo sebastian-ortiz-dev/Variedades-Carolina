@@ -17,3 +17,7 @@ export interface UpdateCategorieI{
     id: string;
     nombre: string;
 }
+
+export interface DeleteCategorieI{
+    id: string;
+}

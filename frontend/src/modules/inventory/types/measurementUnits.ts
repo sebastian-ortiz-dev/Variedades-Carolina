@@ -9,3 +9,14 @@ export interface CreateunitOfMeasure {
   abreviatura: string;
   codigo: string;
 }
+
+export interface UpdateunitOfMeasure{
+    id: string;
+    nombre: string;
+    abreviatura: string;
+    codigo: string;
+}
+
+export interface DeleteunitOfMeasure{
+    id: string;
+}

@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 	"variedades_carolina/src/errors"
@@ -30,7 +31,7 @@ func AllMeasurementunits(ctx context.Context) (*[]DTOs.ListMeasurentUnit, error)
 
 func CreateMeasurementunits(ctx context.Context, data *DTOs.CreateMeasurentUnit) (*DTOs.ListMeasurentUnit, error){
 	measurement, err := repository.CreateMeasurementunits(ctx, uuid.New().String(), data.Nombre, time.Now(), data.Abreviatura, data.Codigo)
-
+	fmt.Println(err)
 	if err != nil{
 		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "Ocurrio un error al crear la medida.", Codigo:"INTERNAL_SERVER_ERROR"}
 		return nil, error_http
@@ -42,8 +43,8 @@ func CreateMeasurementunits(ctx context.Context, data *DTOs.CreateMeasurentUnit)
 }
 
 func UpdateMeasurementunit(ctx context.Context,id string, data *DTOs.UpdateMeasurentUnit) error{
-	err := repository.UpdateMeasurentUnit(ctx, id, data.Nombre)
-
+	err := repository.UpdateMeasurentUnit(ctx, id, data.Nombre, data.Abreviatura, data.Codigo)
+	fmt.Println(err)
 	if err != nil{
 		error_http :=  &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "Ocurrio un error al actualizar la medida.", Codigo:"INTERNAL_SERVER_ERROR"}
 		return error_http
@@ -54,7 +55,7 @@ func UpdateMeasurementunit(ctx context.Context,id string, data *DTOs.UpdateMeasu
 
 func DeleteMeasurementunit(ctx context.Context, id string) error{
 	err := repository.DeleteteMeasurentUnit(ctx, id)
-
+	
 	if err != nil{
 		error_http :=  &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "Ocurrio un error al borrar la medida.", Codigo:"INTERNAL_SERVER_ERROR"}
 		return error_http
