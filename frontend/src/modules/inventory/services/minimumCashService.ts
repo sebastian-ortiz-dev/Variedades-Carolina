@@ -6,7 +6,7 @@ export const GetMinimumCash = async (): Promise<listCash> => {
     return data.data;
 }
 
-export const PostMinimumCash = async (payload: listCash) => {
-    const data = await ApiClient.post(`/inventory/settings/minimum-cash/${payload.id_billete_visual}`, payload.minimim_cash);
+export const PatchMinimumCash = async (payload: listCash) => {
+    const data = await ApiClient.patch(`/inventory/settings/minimum-cash/${payload.id_billete_visual}`, {minimum_cash: payload.minimum_cash});
     return data;
 }

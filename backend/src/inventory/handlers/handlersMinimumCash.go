@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"variedades_carolina/src/errors"
 	"variedades_carolina/src/inventory/DTOs"
 	"variedades_carolina/src/inventory/services"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -14,9 +16,9 @@ import (
 // @Description  List Minimum cash.
 // @Tags         Inventory
 // @Produce      json
-// @Success      200	{object}   DTOs.ListMeasurentUnit	"ok"	
-// @Failure		 500	{object}   errorHttp.HttpError		"Internal server error"              
-// @router		 /inventory/settings/minimum-cash  [get]     
+// @Success      200	{object}   DTOs.ListMeasurentUnit	"ok"
+// @Failure		 500	{object}   errorHttp.HttpError		"Internal server error"
+// @router		 /inventory/settings/minimum-cash  [get]
 func GetMinimumCash(c *gin.Context){
 	ctx := c.Request.Context()
 
@@ -51,14 +53,14 @@ func SetMinimumCash(c *gin.Context){
 		return
 	}
 
-	var dataCash *DTOs.UpdateMinimum
-
+	var dataCash DTOs.UpdateMinimum
+	fmt.Println(dataCash)
 	if err := c.ShouldBindJSON(&dataCash); err != nil{
 		c.Error(&errorHttp.HttpError{Status: http.StatusBadRequest, Detail: "Los datos enviados son invalidos", Codigo: "BAD_REQUEST"})
 		return
 	}
 
-	err := services.UpdateMinimum(ctx, dataCash, id)
+	err := services.UpdateMinimum(ctx, &dataCash, id)
 
 	if err != nil{
 		c.Error(err)

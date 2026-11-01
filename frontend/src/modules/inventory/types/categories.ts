@@ -12,3 +12,8 @@ export interface ListCategoriesCount{
 export interface CreateCategorieI{
     nombre: string;
 }
+
+export interface UpdateCategorieI{
+    id: string;
+    nombre: string;
+}

@@ -28,7 +28,7 @@ func UpdateMinimumCah(ctx context.Context, cash float64, id string) error{
 	sql_query := `UPDATE inventario.billete_minimo SET billete=$1 WHERE id_billete_visual=$2`
 
 	row, err := pool.Exec(ctx, sql_query, cash, id)
-
+	
 	if err != nil{
 		return err
 	}

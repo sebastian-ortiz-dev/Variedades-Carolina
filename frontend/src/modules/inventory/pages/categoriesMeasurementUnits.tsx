@@ -1,19 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from "@tanstack/react-query"
 import { ChevronDown, ChevronUp, Plus, Pencil, Trash2, Banknote, Layers, Ruler, AlertCircle, X } from 'lucide-react';
-import type { ListCategoriesCount, CreateCategorieI } from '../types/categories';
+import type { ListCategoriesCount, CreateCategorieI, UpdateCategorieI } from '../types/categories';
 import type { UnitOfMeasure, CreateunitOfMeasure } from '../types/measurementUnits';
-import type { listCash } from '../types/minimumCash';
+import type { listCash, updateCash } from '../types/minimumCash';
 import { GetCategoriesCount, PostCreateCategorie } from '../services/categories';
 import { GetMeasurements, PostMeasurements } from '../services/measurementUnits';
-import { GetMinimumCash, PostMinimumCash } from '../services/minimumCashService';
+import { GetMinimumCash, PatchMinimumCash } from '../services/minimumCashService';
 import Button from '../components/button';
+import Confirmation from '../components/confirmation';
 
 function categoriesAndMeasuresPage(){
+    const [text, setText] = useState("");
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
     const [error, setError] = useState(false);
+    const [headerError, setErrorHeader] = useState(false);
+    const [headerErrorCash, setErrorHeaderCash] = useState(false);
     const [selectedCategorieCreate, setSelectedCategorieCreate] = useState(false);
     const [selectedMeasurementCreate, setSelectedMeasurementCreate] = useState(false);
+    const [selectedCategorieUpdate, setSelectedCategorieUpdate] = useState<ListCategoriesCount>();
+    const [confirmation, setConfirmation] = useState(false);
+    const [confirmationC, setConfirmationC] = useState(false);
     const [isMeasuresOpen, setIsMeasuresOpen] = useState(true);
     const [categories, setCategories] = useState<ListCategoriesCount[]>([]);
     const [measures, setMeasures] = useState<UnitOfMeasure[]>([]);
@@ -23,24 +30,20 @@ function categoriesAndMeasuresPage(){
     const [minBill, setMinBill] = useState<number>(1.00);
     const [isEditingBill, setIsEditingBill] = useState(false);
     const [tempBill, setTempBill] = useState<number>(minBill);
+    const [form, setForm] = useState<FormData | undefined>();
 
     const listCategories = useQuery({queryKey: ['categories', categories], queryFn: () => GetCategoriesCount()})
     const listMeasurementUnits = useQuery({queryKey: ['measurement', measures], queryFn: () => GetMeasurements()})
     const listCash = useQuery({queryKey: ['cash', cash], queryFn: () => GetMinimumCash()})
     const mutationCreateCategorie = useMutation({ mutationFn: PostCreateCategorie })
     const mutationCreateMeasurement = useMutation({ mutationFn: PostMeasurements })
-    const mutationCash = useMutation({ mutationFn: PostMinimumCash })
-
-    const handleSaveBill = () => {
-        setMinBill(tempBill);
-        setIsEditingBill(false);
-    };
+    const mutationCash = useMutation({ mutationFn: PatchMinimumCash })
 
     useEffect(() => {
         setCategories(listCategories.data ?? []);
         setMeasures(listMeasurementUnits.data ?? []);
         setCash(listCash.data);
-    }, [listCategories, listMeasurementUnits, listCash])
+    }, [listCategories.data, listMeasurementUnits.data, listCash.data])
 
     const createNewCategorie = async (e: React.SubmitEvent) => {
         e.preventDefault();
@@ -68,10 +71,22 @@ function categoriesAndMeasuresPage(){
 
     }
 
+    const UpdateCategorie = async (e: React.SubmitEvent) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        setForm(formData);
+        setText("Esta seguro de cambiar el nombre de la categoria? (Esto Afectara a los productos que pertenecen a la categoria)");
+
+        setConfirmation(true);
+    }
+
+
     const createNewMeasurement = async (e: React.SubmitEvent) => {
         e.preventDefault();
         const form = e.target;
         const formData = new FormData(form);
+        setForm(formData)
         const nombre = formData.get("measurement_name")?.toString() ?? "";
         const abreviatura = formData.get("abbreviate")?.toString() ?? "";
         const codigo = formData.get("code")?.toString() ?? "";
@@ -85,11 +100,9 @@ function categoriesAndMeasuresPage(){
 
         try{
             setError(false)
-            const data = await mutationCreateMeasurement.mutateAsync(payload);
-            if(data.status == 201){
-                setCategories([]);
-                setSelectedMeasurementCreate(false);
-            }
+            await mutationCreateMeasurement.mutateAsync(payload);
+            setCategories([]);
+            setSelectedMeasurementCreate(false);
         } catch(error: any){
             console.log(error)
             setError(true);
@@ -97,10 +110,44 @@ function categoriesAndMeasuresPage(){
 
     }
 
+    const confirmationUpdateCash = async () => {
+        setConfirmation(false)
+        const formData = form;
+        const id = formData?.get("id")?.toString() ?? "";
+        const cash = Number(formData?.get("cash") ?? 0);
+
+        if(cash <= 0 || id == ""){
+                setErrorHeaderCash(true);
+                return;
+        }
+    
+        const payload: updateCash = {id_billete_visual: id, minimum_cash: cash}
+
+        try{
+            setErrorHeaderCash(false)
+            await mutationCash.mutateAsync(payload);
+            setCash(undefined);
+            setIsEditingBill(false);
+        } catch(error: any){
+            console.log(error)
+            setErrorHeaderCash(true);
+        }
+    }
+
+    const updateMinimumCash = (e: React.SubmitEvent) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        setForm(formData);
+        setText("Esta seguro de cambiar el billete minimo? (Esto Afectara a como se sacan los precios en los productos)");
+
+        setConfirmation(true);
+    }
+
+
     return (
         <div className="min-h-screen bg-[#F7F6F3] p-6 text-gray-800 font-sans">
         
-            {/* Header section */}
             <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                 <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -111,6 +158,18 @@ function categoriesAndMeasuresPage(){
                 </p>
                 </div>
             </div>
+
+            {headerError && 
+                <div className="bg-red-50 p-4 rounded-2xl border border-red-200 shadow-md flex flex-col md:flex-row items-center mb-5">
+                    <p className="text-md text-red-700 font-semibold flex">Error: {listCategories.isError || listMeasurementUnits.isError || listCash.isError ? ( listCash.error?.message) : (<p> </p>)}</p>
+                </div>
+            }
+
+            {headerErrorCash && 
+                <div className="bg-red-50 p-4 rounded-2xl border border-red-200 shadow-md flex flex-col md:flex-row items-center mb-5">
+                    <p className="text-md text-red-700 font-semibold">Error: Ocurrio un error al actualizar el billete minimo</p>
+                </div>
+            }
 
             <div className="space-y-6 max-w-6xl mx-auto">
 
@@ -138,7 +197,7 @@ function categoriesAndMeasuresPage(){
                             <div className="flex items-center gap-4">
                                 <div className="text-right">
                                     <span className="block text-xs font-medium text-gray-400 uppercase">Mínimo Actual</span>
-                                    <span className="text-xl font-extrabold text-gray-900">{cash?.minimim_cash.toFixed(2)} VES</span>
+                                    <span className="text-xl font-extrabold text-gray-900">{cash?.minimum_cash.toFixed(2)} VES</span>
                                 </div>
                                 <button
                                 onClick={() => { setTempBill(minBill); setIsEditingBill(true); }}
@@ -150,13 +209,21 @@ function categoriesAndMeasuresPage(){
                             </div>
                         ) : (
                             <div className="flex items-center gap-2">
-                                <form className="relative">
-                                    <input type="number" step="0.05" min="0" value={cash?.minimim_cash} onChange={(e) => setTempBill(parseFloat(e.target.value) || 0)} className="w-28 pl-4 pr-3 py-1.5 bg-gray-50 border border-amber-300 rounded-xl font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                                <span className='mx-2 text-gray-900 font-extrabold'>Valor actual: {cash?.minimum_cash}</span>
+                                <form onSubmit={updateMinimumCash} method='POST' className="relative flex">
+                                    <input type='hidden' name='id' value={cash?.id_billete_visual}/>
+                                    <input type="number" name='cash' step="1" min="0" className="w-28 pl-4 pr-3 py-1.5 bg-gray-50 border border-amber-300 rounded-xl font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                                    {mutationCash.isPending ? 
+                                        <button className="h-7 mt- ml-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition-colors" disabled>
+                                            Guardando... 
+                                            <div className='text-white animate-spin'></div>
+                                        </button> :
+                                        <button className="cursor-pointer h-7 mt-1.5 ml-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition-colors">
+                                            Guardar 
+                                        </button>
+                                    }
                                 </form>
-                                <button onClick={handleSaveBill} className="cursor-pointer px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition-colors">
-                                    Guardar
-                                </button>
-                                <button onClick={() => setIsEditingBill(false)} className="cursor-pointer px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold rounded-xl transition-colors">
+                                <button onClick={() => setIsEditingBill(false)} className="cursor-pointer mt-0.5 px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold rounded-xl transition-colors">
                                     Cancelar
                                 </button>
                             </div>
@@ -220,6 +287,7 @@ function categoriesAndMeasuresPage(){
 
                             <div className="flex items-center gap-1">
                                 <button 
+                                    onClick={() => setSelectedCategorieUpdate(cat)}
                                     title="Editar Categoría"
                                     className="cursor-pointer p-1.5 text-gray-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
                                 >
@@ -333,6 +401,30 @@ function categoriesAndMeasuresPage(){
                 </div>
             )}
 
+            {selectedCategorieUpdate && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-5 space-y-4 border">
+                        <div className="flex justify-between items-center border-b pb-2">
+                            <div>
+                                <h3 className="font-mono font-bold text-lg text-slate-800">Actualizar Categoria</h3>
+                            </div>
+                            <span onClick={() => setSelectedCategorieUpdate(undefined)} className="text-slate-400 cursor-pointer hover:text-slate-600 font-bold">
+                                <X />
+                            </span>
+                        </div>
+
+                        <form onSubmit={createNewCategorie} method='POST'>
+                            <div className='text-black mb-5'>
+                                <label htmlFor='categorie_name'>Nombre: </label> <br/>
+                                <input type='text' name='categorie_name' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 focus:bg-white focus:outline-amber-200' placeholder='Nombre de categoria' required/>
+                            </div>
+                            <Button loading={mutationCreateCategorie.isPending} textLoad='Actualizando...' text='Actualizar Categoria' />
+                        </form>
+                        {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al crear la categoria </p></div>}
+                    </div>
+                </div>
+            )}
+
             {selectedMeasurementCreate && (
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-5 space-y-4 border">
@@ -364,6 +456,8 @@ function categoriesAndMeasuresPage(){
                     </div>
                 </div>
             )}
+
+            <Confirmation confirmation={confirmation} text={text} confirmationUpdateCash={confirmationUpdateCash} setConfirmation={setConfirmation}/>
         </div>
     );
 };
