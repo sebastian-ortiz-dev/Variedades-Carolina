@@ -1,6 +1,13 @@
 import { Info } from "lucide-react"
 
-function Confirmation({confirmation, text, confirmationUpdateCash, setConfirmation}: any){
+interface propsConfirmation{
+    confirmation: boolean;
+    text: string;
+    action: () => Promise<void>;
+    setConfirmation: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function Confirmation({confirmation, text, action, setConfirmation}: propsConfirmation){
     return(
         <>
         {confirmation && (
@@ -9,7 +16,7 @@ function Confirmation({confirmation, text, confirmationUpdateCash, setConfirmati
                         <Info className='w-35 h-35 text-blue-400 mx-auto'/>
                         <p className='text-slate-900'>{text}</p>
                         <div className='flex justify-center-safe gap-3'> 
-                            <button onClick={confirmationUpdateCash} className="cursor-pointer ml-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 hover:duration-500 text-white text-md font-semibold rounded-xl transition-colors">
+                            <button onClick={action} className="cursor-pointer ml-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 hover:duration-500 text-white text-md font-semibold rounded-xl transition-colors">
                                 Confirmar 
                             </button>
                             <button onClick={() => setConfirmation(false)} className="cursor-pointer  px-3 py-1.5 bg-gray-200 hover:bg-gray-300 hover:duration-500 text-gray-700 text-md font-semibold rounded-xl transition-colors">
@@ -18,7 +25,7 @@ function Confirmation({confirmation, text, confirmationUpdateCash, setConfirmati
                         </div>
                     </div>
                 </div>
-            )}
+        )}
         </>
     )
 }
