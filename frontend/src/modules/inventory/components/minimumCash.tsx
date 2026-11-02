@@ -1,16 +1,17 @@
 import { Pencil, Banknote, AlertCircle } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { listCash, updateCash } from '../types/minimumCash';
 import { GetMinimumCash, PatchMinimumCash } from '../services/minimumCashService';
 import Confirmation from './confirmation';
 
 interface propsCash{
+    setNotification: React.Dispatch<React.SetStateAction<string>>;
     setErrorHeader: React.Dispatch<React.SetStateAction<boolean>>;
     setErrorHeaderCash: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function MinimumCash({setErrorHeader, setErrorHeaderCash}: propsCash){
+function MinimumCash({setNotification, setErrorHeader, setErrorHeaderCash}: propsCash){
     const [text, setText] = useState("");
     const [cash, setCash] = useState<listCash | undefined>();
     const [isEditingBill, setIsEditingBill] = useState(false);
@@ -23,6 +24,15 @@ function MinimumCash({setErrorHeader, setErrorHeaderCash}: propsCash){
     useEffect(() => {
             setCash(listCash.data);
     }, [listCash.data])
+
+    const updateMinimumCash = (e: React.SubmitEvent) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        setForm(formData);
+        setText("Esta seguro de cambiar el billete minimo? (Esto Afectara a como se sacan los precios en los productos)");
+        setConfirmation(true);
+    }
 
     const confirmationUpdateCash = async () => {
         setConfirmation(false)
@@ -41,19 +51,11 @@ function MinimumCash({setErrorHeader, setErrorHeaderCash}: propsCash){
             setErrorHeaderCash(false)
             await mutationCash.mutateAsync(payload);
             setCash(undefined);
+            setNotification(`Los cambios en el billete minimo se guardaron correctamente.`)
             setIsEditingBill(false);
         } catch(error: any){
             setErrorHeaderCash(true);
         }
-    }
-    
-    const updateMinimumCash = (e: React.SubmitEvent) => {
-        e.preventDefault();
-        const form = e.target;
-        const formData = new FormData(form);
-        setForm(formData);
-        setText("Esta seguro de cambiar el billete minimo? (Esto Afectara a como se sacan los precios en los productos)");
-        setConfirmation(true);
     }
 
     return(

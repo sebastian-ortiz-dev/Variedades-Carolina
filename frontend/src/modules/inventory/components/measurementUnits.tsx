@@ -7,10 +7,11 @@ import Button from '../components/button';
 import Confirmation from '../components/confirmation';
 
 interface propsMeasurements{
+    setNotification: React.Dispatch<React.SetStateAction<string>>;
     setErrorHeader: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Measurements({setErrorHeader}: propsMeasurements){
+function Measurements({setNotification, setErrorHeader}: propsMeasurements){
     const [text, setText] = useState("");
     const [error, setError] = useState(false);
     const [selectedMeasurementCreate, setSelectedMeasurementCreate] = useState(false);
@@ -51,6 +52,7 @@ function Measurements({setErrorHeader}: propsMeasurements){
             setError(false)
             await mutationCreateMeasurement.mutateAsync(payload);
             setMeasures([]);
+            setNotification(`La unidad de medida ${nombre} (${abreviatura}) se registró correctamente.`)
             setSelectedMeasurementCreate(false);
         } catch(error: any){
             console.log(error)
@@ -88,6 +90,7 @@ function Measurements({setErrorHeader}: propsMeasurements){
             setError(false);
             await mutationUpdateMeasurement.mutateAsync(payload);
             setMeasures([]);
+            setNotification(`Los cambios en la unidad ${selectedMeasureUpdate?.nombre} ${selectedMeasureUpdate?.abreviatura} se guardaron correctamente.`)
             setSelectedMeasureUpdate(undefined)
         } catch(error: any){
             setError(true);
@@ -120,6 +123,7 @@ function Measurements({setErrorHeader}: propsMeasurements){
             setError(false);
             await mutationDeleteMeasurement.mutateAsync(payload);
             setMeasures([]);
+            setNotification(`La unidad de medida ${selectedMeasureDelete?.nombre} ${selectedMeasureDelete?.abreviatura} fue eliminada del sistema.`)
             setSelectedMeasureDelete(undefined)
         } catch(error: any){
             setError(true);
@@ -205,7 +209,7 @@ function Measurements({setErrorHeader}: propsMeasurements){
                                 <input type='text' id='code' name='code' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 focus:bg-white focus:outline-amber-200' placeholder='PKG' required/>
                             </div>
                             <Button loading={mutationCreateMeasurement.isPending} textLoad='Creando...' text='Crear unidad de medida' />
-                            {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al crear la unidad de medida </p></div>}
+                            {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al crear la unidad de medida (No pueden haber dos medidas con el mismo nombre) </p></div>}
                         </form>
                     </div>
                 </div>
@@ -238,7 +242,7 @@ function Measurements({setErrorHeader}: propsMeasurements){
                                 <input type='text' id='code' name='code' className='w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 focus:bg-white focus:outline-amber-200' placeholder='Codigo estandar'/>
                             </div>
                             <Button loading={mutationUpdateMeasurement.isPending} textLoad='Modificando...' text='Modificar unidad de medida' />
-                            {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al eliminar la unidad de medida </p></div>}
+                            {error &&<div className='w-full flex p-1 bg-amber-100/95 border border-red-500 rounded-md mt-4'> <p> Ha ocurrido un error al eliminar la unidad de medida (No pueden haber dos medidas con el mismo nombre) </p></div>}
                         </form>
                     </div>
                 </div>

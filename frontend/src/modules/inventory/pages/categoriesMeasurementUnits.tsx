@@ -5,7 +5,8 @@ import Measurements from '../components/measurementUnits';
 
 function categoriesAndMeasuresPage(){
     const [headerError, setErrorHeader] = useState(false);
-    const [headerErrorCash, setErrorHeaderCash] = useState(false);    
+    const [headerErrorCash, setErrorHeaderCash] = useState(false);  
+    const [notification, setNotification] = useState("")  
 
     return (
         <div className="min-h-screen bg-[#F7F6F3] p-6 text-gray-800 font-sans">
@@ -21,6 +22,12 @@ function categoriesAndMeasuresPage(){
                 </div>
             </div>
 
+            {notification != "" && 
+                <div className="bg-green-50 p-4 rounded-2xl border border-green-200 shadow-md flex flex-col md:flex-row items-center mb-5">
+                    <p className="text-md text-green-700 font-semibold flex">{notification}</p>
+                </div>
+            }
+
             {headerError && 
                 <div className="bg-red-50 p-4 rounded-2xl border border-red-200 shadow-md flex flex-col md:flex-row items-center mb-5">
                     <p className="text-md text-red-700 font-semibold flex">Error: Ha ocurrido un error al tratar de conectar con el servidor!</p>
@@ -34,11 +41,11 @@ function categoriesAndMeasuresPage(){
             }
 
             <div className="space-y-6 max-w-6xl mx-auto">
-                <MinimumCash setErrorHeader={setErrorHeader} setErrorHeaderCash={setErrorHeaderCash}/>
+                <MinimumCash setNotification={setNotification} setErrorHeader={setErrorHeader} setErrorHeaderCash={setErrorHeaderCash}/>
 
-                <Categories setErrorHeader={setErrorHeader}/>
+                <Categories setNotification={setNotification} setErrorHeader={setErrorHeader}/>
 
-                <Measurements setErrorHeader={setErrorHeader}/>
+                <Measurements setNotification={setNotification} setErrorHeader={setErrorHeader}/>
             </div>
         </div>
     );

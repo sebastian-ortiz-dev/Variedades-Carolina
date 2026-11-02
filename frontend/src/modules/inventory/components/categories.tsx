@@ -7,10 +7,11 @@ import Button from './button';
 import Confirmation from './confirmation';
 
 interface propsCategories{
+    setNotification: React.Dispatch<React.SetStateAction<string>>;
     setErrorHeader: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Categories({setErrorHeader}: propsCategories){
+function Categories({setNotification, setErrorHeader}: propsCategories){
     const [text, setText] = useState("");
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
     const [error, setError] = useState(false);
@@ -46,11 +47,10 @@ function Categories({setErrorHeader}: propsCategories){
 
         try{
             setError(false)
-            const data = await mutationCreateCategorie.mutateAsync(payload);
-            if(data.status == 201){
-                setCategories([]);
-                setSelectedCategorieCreate(false);
-            }
+            await mutationCreateCategorie.mutateAsync(payload);
+            setCategories([]);
+            setNotification(`La categoría ${nombre} se registró correctamente.`)
+            setSelectedCategorieCreate(false);
         } catch(error: any){
             setError(true);
         }
@@ -84,6 +84,7 @@ function Categories({setErrorHeader}: propsCategories){
             setError(false);
             await mutationUpdateCategorie.mutateAsync(payload);
             setCategories([]);
+            setNotification(`Los cambios en la categoría ${categoriaNombre} se guardaron correctamente.`)
             setSelectedCategorieUpdate(undefined)
         } catch(error: any){
             setError(true);
@@ -104,6 +105,7 @@ function Categories({setErrorHeader}: propsCategories){
         setConfirmationCD(false);
         const formData = form;
         const id = formData?.get("id_categorie")?.toString() ?? "";
+        const nombre = formData?.get("categorie_name")?.toString();
 
         if(id == ""){
             setError(true);
@@ -116,6 +118,7 @@ function Categories({setErrorHeader}: propsCategories){
             setError(false);
             await mutationDeleteCategorie.mutateAsync(payload);
             setCategories([]);
+            setNotification(`La categoría ${nombre} fue eliminada del sistema.`)
             setSelectedCategorieDelete(undefined)
         } catch(error: any){
             setError(true);
