@@ -155,7 +155,6 @@ function Measurements({setNotification, setErrorHeader}: propsMeasurements){
                     </div>
                 </div>
 
-                {/* Body Acordeón */}
                 {isMeasuresOpen && (
                     <div className="p-5 bg-gray-50/30">
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">

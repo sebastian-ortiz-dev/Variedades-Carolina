@@ -1,12 +1,12 @@
-import { PackageSearch } from "lucide-react"
-import { useRef, useEffect } from "react";
+import { PackageSearch, Info, Pencil, Trash2 } from "lucide-react"
+import { useRef, useEffect, useState } from "react";
 import type { GetInventoryCatalog, ListParameters } from "../types/inventoryInterfaces";
 import { useQuery } from "@tanstack/react-query";
 import useIsVisible from "../hooks/itIsVisible";
 import { GetListInventory } from "../services/inventory";
+import ProductInfor from "./productInfo";
 
 interface listProductsProps{
-    //loading: boolean;
     listProducts: GetInventoryCatalog[]; 
     setListProducts: React.Dispatch<React.SetStateAction<GetInventoryCatalog[]>>;
     payload: ListParameters;
@@ -16,6 +16,7 @@ interface listProductsProps{
 function ListProducts({listProducts, setListProducts, payload, setPayload}: listProductsProps){
     const elementoRef = useRef<HTMLDivElement | null>(null);
     const estaVisible = useIsVisible(elementoRef);
+    const [product, setProduct] = useState<GetInventoryCatalog>()
     const query = useQuery({ queryKey: ['productsList', payload], queryFn: () => GetListInventory(payload)});
     const products = query.data?.products;
     const nextCursor = query.data?.nextCursor;
@@ -115,9 +116,16 @@ function ListProducts({listProducts, setListProducts, payload, setPayload}: list
                                 <span className="text-[10px] font-bold text-amber-800 uppercase block leading-tight">Tasa BCV</span>
                                 <span className="text-lg font-extrabold text-gray-900">744.60 <span className="text-xs text-gray-500 font-bold">VES</span></span>
                             </div>
-                            <div className="text-right">
-                                <span className="text-xs font-extrabold text-amber-900 block">$20.40 USD</span>
-                                <span className="text-[9px] text-gray-400 font-medium">PVP Venta</span>
+                            <div className="flex items-center gap-1">
+                                <button onClick={() => setProduct(product)} title="Editar Medida" className="cursor-pointer p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                                    <Info className="w-4.5 h-4.5" />
+                                </button>
+                                <button title="Editar Medida" className="cursor-pointer p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                    <Pencil className="w-4.5 h-4.5" />
+                                </button>
+                                <button title="Eliminar Medida" className="cursor-pointer p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
+                                    <Trash2 className="w-4.5 h-4.5" />
+                                </button>
                             </div>
                         </div>
 
@@ -138,6 +146,8 @@ function ListProducts({listProducts, setListProducts, payload, setPayload}: list
                 <span>Cargando más productos...</span>
             </button>
         </div>
+
+        <ProductInfor selectedProduct={product} setProduct={setProduct} />
         </>
     )
 }
