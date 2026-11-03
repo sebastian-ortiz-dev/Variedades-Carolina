@@ -56,7 +56,7 @@ function HeaderListInventory({lowStock, setLowStock, categories, setListProducts
                         <p>Categorías</p>
                         <ArrowLeft className={"size-4.5 ml-1 mt-0.5 " + (categorie ? "-rotate-90 duration-250" : "-rotate-0 duration-250")}/>
                     </div>
-                    <div className={"absolute z-20 rounded-md bg-white mt-65 mr-32 " + (categorie ? "block" : "hidden")}>
+                    <div className={"absolute z-20 rounded-md bg-white max-h-45 mt-54.5 mr-32 overflow-y-auto " + (categorie ? "block" : "hidden")}>
                         <p onClick={() => ChangeCategorie("")} className="cursor-pointer px-2 py-1 hover:bg-gray-100 hover:duration-350">Todos los productos</p>
                         {categories?.map((categorie: ListCategories) => (
                             <p key={categorie.id} onClick={() => ChangeCategorie(categorie.id)} className="cursor-pointer px-2 py-1 hover:bg-gray-100 hover:duration-350">{categorie.nombre}</p>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MinimumCash from '../components/minimumCash';
 import Categories from '../components/categories';
 import Measurements from '../components/measurementUnits';
@@ -8,7 +8,18 @@ function categoriesAndMeasuresPage(){
     const [headerErrorCash, setErrorHeaderCash] = useState(false);  
     const [notification, setNotification] = useState("")  
 
+    const timeoutNotification = setTimeout(() => {
+        setNotification("")
+    }, 25000)
+
+    useEffect(() => {
+        timeoutNotification
+        console.log(clearTimeout(timeoutNotification))
+    }, [notification])
+
     return (
+        <>
+        <title>Categorias y unidades de medida</title>
         <div className="min-h-screen bg-[#F7F6F3] p-6 text-gray-800 font-sans">
         
             <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -48,6 +59,7 @@ function categoriesAndMeasuresPage(){
                 <Measurements setNotification={setNotification} setErrorHeader={setErrorHeader}/>
             </div>
         </div>
+        </>
     );
 };
 
