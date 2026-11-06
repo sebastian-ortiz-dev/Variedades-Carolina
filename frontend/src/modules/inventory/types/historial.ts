@@ -25,9 +25,11 @@ interface Movement {
 
 export interface PaginationMeta {
     data: Movement[];
-    current_page: number;
-    limit: number;
-    page_items_count: number;
-    total_items: number;
-    total_pages: number;
+    meta: {
+      current_page: number;
+      limit: number;
+      page_items_count: number;
+      total_items: number;
+      total_pages: number;
+    }
 }

@@ -7,10 +7,9 @@ import { GetHistorial } from '../services/historial';
 import { GetMoviments } from '../services/moviments';
 
 export default function historialMovimientosView() {
-  // Estados de filtros y paginación
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(15); // 10 o 15 por defecto
-  const [moviment, setMoviment] = useState(""); // 10 o 15 por defecto
+  const [limit, setLimit] = useState(15); 
+  const [moviment, setMoviment] = useState(""); 
   const todayStr = new Date().toISOString().split('T')[0];
   const [payload, setPayload] = useState<historialParameters>({fecha_fin: todayStr, fecha_inicio: todayStr, id_tipo_movimiento: "", limit: 15, page: 1, q: ""})
   const historial = useQuery({queryKey: ["historial", payload], queryFn: () => GetHistorial(payload)})
@@ -19,10 +18,10 @@ export default function historialMovimientosView() {
   const [fechaDesde, setFechaDesde] = useState(todayStr);
   const [fechaHasta, setFechaHasta] = useState(todayStr);
   
-  const total_pages = historial.data?.total_pages ?? 1;
-  const total_items = historial.data?.total_items ?? 0;
-  const current_page = historial.data?.current_page ?? 1;
-  const limitPage = historial.data?.limit ?? 15;
+  const total_pages =  historial.data?.meta.total_pages ?? 1;
+  const total_items = historial.data?.meta.total_items ?? 0;
+  const current_page = historial.data?.meta.current_page ?? 1;
+  const limitPage = historial.data?.meta.limit ?? 15;
 
   const limitPerPage = (limit: number) => {
     console.log(limit)
@@ -207,8 +206,8 @@ export default function historialMovimientosView() {
             </button>
 
             {/* Generador simple de botones de páginas 1-2-3... */}
-            {Array.from({ length: historial.data?.total_pages ?? 0 }, (_, i) => i + 1).map((page) => {
-              const isSelected = page === historial.data?.current_page;
+            {Array.from({ length: historial.data?.meta.total_pages ?? 0 }, (_, i) => i + 1).map((page) => {
+              const isSelected = page === historial.data?.meta.current_page;
               return (
                 <button
                   key={page}
