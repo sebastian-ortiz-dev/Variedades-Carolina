@@ -15,7 +15,7 @@ import (
 // @Tags         Inventory
 // @Accept		 json
 // @Produce      json
-// @Param		 data			query		DTOs.HistoryQueryFilterDTO		 true	"Datos del listado"
+// @Param		 data			query		DTOs.HistoryQueryFilterDTO		 	true	"Datos del listado"
 // @Success      200			{object}	DTOs.PaginatedHistoryResponseDTO 	"ok"
 // @Failure		 400			{object}	errorHttp.HttpError		 			"bad request"
 // @Failure		 422			{object}	errorHttp.HttpError		 			"Unprocessable Content"
