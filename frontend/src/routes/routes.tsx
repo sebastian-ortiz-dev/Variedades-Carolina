@@ -7,6 +7,7 @@ import dashboard from "../pages/dashboard";
 import inventory from "../modules/inventory/pages/listInvetory"
 import categoriesAndMeasuresPage from "../modules/inventory/pages/categoriesMeasurementUnits";
 import historialMovimientosView from "../modules/inventory/pages/historialMoviments";
+import MovementsPage from "../modules/inventory/pages/movements";
 
 export const router = createBrowserRouter([
     {
@@ -20,7 +21,8 @@ export const router = createBrowserRouter([
                 children:[
                     { index: true, path:"list", Component: inventory},
                     { path: "categories-measurement", Component: categoriesAndMeasuresPage},
-                    { path: "historial", Component: historialMovimientosView}
+                    { path: "historial", Component: historialMovimientosView},
+                    { path: "moviments", Component: MovementsPage}
                 ] 
             },
         ]

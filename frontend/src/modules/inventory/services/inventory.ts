@@ -1,5 +1,5 @@
 import { ApiClient }  from '../../../config/axiosConfig';
-import type { ListParameters, ListCatalogComplete }  from "../types/inventoryInterfaces";
+import type { ListParameters, ListCatalogComplete, GetInventoryCatalog }  from "../types/inventoryInterfaces";
 
 export const GetListInventory = async (filters: ListParameters): Promise<ListCatalogComplete> => {
     const data = await ApiClient.get<ListCatalogComplete>("/inventory/products", {params: {
@@ -11,3 +11,8 @@ export const GetListInventory = async (filters: ListParameters): Promise<ListCat
     },})
     return data.data;
 };
+
+export const GetProducts = async(payload: string): Promise<GetInventoryCatalog[]> => {
+  const data = await ApiClient.get<GetInventoryCatalog[]>(`inventory/products/search?q=${payload}`);
+  return data.data;
+}

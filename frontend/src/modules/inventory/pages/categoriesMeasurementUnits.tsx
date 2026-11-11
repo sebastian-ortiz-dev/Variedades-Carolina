@@ -14,7 +14,7 @@ function categoriesAndMeasuresPage(){
 
     useEffect(() => {
         timeoutNotification
-        console.log(clearTimeout(timeoutNotification))
+        clearTimeout(timeoutNotification)
     }, [notification])
 
     return (

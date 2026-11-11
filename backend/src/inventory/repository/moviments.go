@@ -7,7 +7,6 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	//"variedades_carolina/src/inventory/DTOs"
 	"variedades_carolina/src/inventory/models"
 )
 

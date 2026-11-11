@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"variedades_carolina/src/config"
 	"variedades_carolina/src/errors"
@@ -54,12 +53,12 @@ func ExecMoviment(ctx context.Context, data *DTOs.CreateMovementDTO) error{
 	}
 
 	usuario, err := repository.GetOneUser(ctx, data.UserID, tx)
-	fmt.Println(err)
 
 	if err != nil{
 		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No existe el usuario.", Codigo:"INTERNAL_SERVER_ERROR"}
 		return error_http
 	}
+	defer tx.Rollback(ctx)
 
 	amount, erro := execadjust(moviment.Id, producto.Cantidad, data.Quantity)
 
@@ -85,8 +84,6 @@ func ExecMoviment(ctx context.Context, data *DTOs.CreateMovementDTO) error{
 		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No se ejecuto la accion.", Codigo:"INTERNAL_SERVER_ERROR"}
 		return error_http
 	}
-
-	defer tx.Rollback(ctx)
 
 	return nil
 }

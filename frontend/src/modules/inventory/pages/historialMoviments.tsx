@@ -24,7 +24,6 @@ export default function historialMovimientosView() {
   const limitPage = historial.data?.meta.limit ?? 15;
 
   const limitPerPage = (limit: number) => {
-    console.log(limit)
     setPayload((prev: historialParameters) => ({
       ...prev,
       limit: limit,
@@ -32,7 +31,6 @@ export default function historialMovimientosView() {
   }
 
   const typeMoviment = (moviment: string) => {
-    console.log(moviment)
     setPayload((prev: historialParameters) => ({
       ...prev,
       id_tipo_movimiento: moviment,

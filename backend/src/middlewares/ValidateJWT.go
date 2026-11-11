@@ -15,14 +15,8 @@ import (
 
 func Validatejwt() gin.HandlerFunc{
 	return func(c *gin.Context) {
-		/*authheader := c.GetHeader("Authorization")
-		if !strings.HasPrefix(authheader, "Bearer") || authheader == "" {
-			c.Error(&errorHttp.HttpError{Status: http.StatusUnauthorized, Detail: "Not log in", Codigo:"UNAUTHORIZED"})
-			c.Abort()
-			return 
-		}*/
-
 		tokenheader, err := c.Cookie("Authorization")
+
 		if err != nil{
 			c.Error(&errorHttp.HttpError{Status: http.StatusUnauthorized, Detail: "Not log in", Codigo:"UNAUTHORIZED"})
 			c.Abort()
@@ -30,8 +24,6 @@ func Validatejwt() gin.HandlerFunc{
 		}
 
 		claim := &secure.ClaimsUser{}
-		//tokenwithoutBearer := strings.TrimPrefix(authheader, "Bearer")	
-		//tokenheader := strings.Replace(tokenwithoutBearer, " ", "", 1)
 		
 		token, err := jwt.ParseWithClaims(tokenheader, claim, func(t *jwt.Token) (interface{}, error) {
 
@@ -61,7 +53,7 @@ func Validatejwt() gin.HandlerFunc{
 			return 
 		}
 
-		c.Set(claim, token)
+		c.Set("claim", token)
 		
 		c.Next()
 	}
