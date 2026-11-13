@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeftRight, Info, PackagePlus } from "lucide-react";
 import type { ListMoviment } from "../types/moviments";
 import { GetMoviments } from "../services/moviments";
@@ -6,12 +6,25 @@ import { useQuery } from "@tanstack/react-query";
 import MovementTypeCard from "../components/movimentTypeCard";
 import MovementForm from "../components/movementForm";
 
-const noop = (): void => undefined;
-
 export default function MovementsPage() {
   const NEW_PRODUCT_MOVEMENT = "Entrada nuevo producto";
+  const [error, setError] = useState<string | null>(null);
+  const [message, setMesagge] = useState<string | null>(null);
   const [selected, setSelected] = useState<ListMoviment | null>(null);
   const moviment = useQuery({queryKey: ["moviments"], queryFn: () => GetMoviments()})
+
+  if(moviment.isError){
+    setError(moviment.error.message);
+  }
+
+  const timeoutNotification = setTimeout(() => {
+      setMesagge(null);
+  }, 25000)
+
+  useEffect(() => {
+    timeoutNotification
+    clearTimeout(timeoutNotification)
+  }, [error, message])
 
   const handleSelect = (movement: ListMoviment) => {
     setSelected(movement);
@@ -62,8 +75,20 @@ export default function MovementsPage() {
           </div>
         </section>
 
+        {message && 
+          <div className="bg-green-50 p-4 rounded-2xl border border-green-200 shadow-md flex flex-col md:flex-row items-center mb-5">
+            <p className="text-md text-green-700 font-semibold flex">{message}</p>
+          </div>
+        }
+
+        {error && 
+          <div className="bg-red-50 p-4 rounded-2xl border border-red-200 shadow-md flex flex-col md:flex-row items-center mb-5">
+            <p className="text-md text-red-700 font-semibold flex">Error: {error}</p>
+          </div>
+        }
+
         {selected ? (
-          <MovementForm key={selected.id} movement={selected} new_product={NEW_PRODUCT_MOVEMENT} onRegistered={noop} onError={noop}/>
+          <MovementForm key={selected.id} movement={selected} new_product={NEW_PRODUCT_MOVEMENT} setError={setError} setMessage={setMesagge} />
         ) : (
           <div className="bg-white rounded-2xl border border-dashed border-gray-200 p-8 text-center">
             <PackagePlus className="w-8 h-8 text-gray-300 mx-auto" />

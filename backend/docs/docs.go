@@ -93,6 +93,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/me": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the identity of the authenticated user from the validated JWT.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get the authenticated user",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_auth_DTOs.Userdata"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/categories": {
             "get": {
                 "security": [
@@ -1364,11 +1401,6 @@ const docTemplate = `{
         },
         "variedades_carolina_src_inventory_DTOs.UpdateMeasurentUnit": {
             "type": "object",
-            "required": [
-                "abreviatura",
-                "codigo",
-                "nombre"
-            ],
             "properties": {
                 "abreviatura": {
                     "type": "string"
@@ -1384,10 +1416,10 @@ const docTemplate = `{
         "variedades_carolina_src_inventory_DTOs.UpdateMinimum": {
             "type": "object",
             "required": [
-                "minimim_cash"
+                "minimum_cash"
             ],
             "properties": {
-                "minimim_cash": {
+                "minimum_cash": {
                     "type": "number"
                 }
             }

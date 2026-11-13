@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { NewProductDraft } from "../types/movement";
+import type { NewProductDraft } from "../types/moviments";
 import type { ListCategories } from "../types/categories";
 import type { UnitOfMeasure } from "../types/measurementUnits";
 import { GetCategories } from "../services/categories";

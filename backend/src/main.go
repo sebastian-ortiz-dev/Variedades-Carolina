@@ -47,6 +47,9 @@ func main(){
 	{
 		// routes of inventory module
 		routes.Registerinventory(v1)
+
+		// routes of auth module
+		routesLogin.RegisterMe(v1)
 	}
 
 	// run application

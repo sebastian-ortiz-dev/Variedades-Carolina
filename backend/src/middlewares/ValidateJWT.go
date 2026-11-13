@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	//"strings"
 	"variedades_carolina/src/errors"
 	"variedades_carolina/src/secure"
 
@@ -47,13 +46,13 @@ func Validatejwt() gin.HandlerFunc{
 		erro := Jwt_errors(err)
 
 		if erro != nil {
-			
 			c.Error(erro)
 			c.Abort()
 			return 
 		}
 
-		c.Set("claim", token)
+		c.Set("token", token)
+		c.Set("claim", claim)
 		
 		c.Next()
 	}

@@ -1,19 +1,22 @@
-import logo from '../assets/screen.png';
 import { X, LayoutDashboard, Package, ReceiptText, UserRoundMinusIcon, Coins, Cog, ArrowLeft, LogOut } from 'lucide-react';
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from "react-router";
 import { LogOutSession } from "../services/logout";
+import type { UseQueryResult } from '@tanstack/react-query';
+import type { userdata } from '../types/interfacesUser';
 
 interface propHidden{
     hidden: boolean;
     setHidden: React.Dispatch<React.SetStateAction<boolean>>;
+    userData: UseQueryResult<userdata, Error>;
 }
 
-function NavBarComponent({ hidden, setHidden }: propHidden){
+function NavBarComponent({ hidden, setHidden, userData }: propHidden){
     const logoutMutation = useMutation({mutationFn: LogOutSession})
-    const[inventory, setInventory] = useState(false);
+    const [inventory, setInventory] = useState(false);
     const navigate = useNavigate();
+    const user = userData.data
 
     const clearSession = async() => {
         const data = await logoutMutation.mutateAsync();
@@ -27,11 +30,28 @@ function NavBarComponent({ hidden, setHidden }: propHidden){
             <nav className={'fixed h-full w-90 z-40 bg-white shadow-md ' + (hidden ? "block" : "hidden" )}>
                 <div className='w-full items-center-safe border-b-2 border-slate-300'>
                     <X onClick={() => setHidden(!hidden)} className='absolute ml-80 mt-2 md:hidden lg:hidden'/>
-                    <div className='ml-36 mt-2'>
-                        <img src={logo} alt='variedades_carolina_logo' className='w-19 h-19 border border-amber-200 rounded-[50%]'/>
-                    </div>
-                    <p className='text-center'>Nombre</p>
-                    <p className='text-center mb-2'>Administrador</p>
+                    { userData.isError ? (<>    
+                        <div className='bg-red-300 border border-red-600'>
+                            <p className='text-center'>Error al cargar los datos de sesion</p> 
+                        </div>   
+                        </>) : 
+                        userData.isLoading ? (
+                            <>
+                                <div className='ml-36 mt-2 animate-spin text-amber-200'></div>
+                                <p className='text-center'>Cargando datos...</p>
+                            </>
+                        )
+                        :
+                        (
+                            <>
+                                <div className='ml-36 mt-2'>
+                                    <img src={user?.imagen} alt={`${user?.name}_imagen`} className='w-19 h-19 border border-amber-200 rounded-[50%] text-[12px]'/>
+                                </div>
+                                <p className='text-center'>{user?.name}</p>
+                                <p className='text-center mb-2'>{user?.rol}</p>
+                            </>
+                        )
+                    }
                 </div>
                 <div className='flex-row'>
                     <div onClick={() => navigate("/dashboard")} className='cursor-pointer w-full h-15 items-center-safe boder-t-2 border-slate-500 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-2'>

@@ -258,17 +258,13 @@ definitions:
         type: string
       nombre:
         type: string
-    required:
-    - abreviatura
-    - codigo
-    - nombre
     type: object
   variedades_carolina_src_inventory_DTOs.UpdateMinimum:
     properties:
-      minimim_cash:
+      minimum_cash:
         type: number
     required:
-    - minimim_cash
+    - minimum_cash
     type: object
   variedades_carolina_src_inventory_DTOs.UpdateProduct:
     properties:
@@ -347,6 +343,30 @@ paths:
           schema:
             $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
       summary: Logout user
+      tags:
+      - auth
+  /auth/me:
+    get:
+      description: Returns the identity of the authenticated user from the validated
+        JWT.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_auth_DTOs.Userdata'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Get the authenticated user
       tags:
       - auth
   /inventory/categories:

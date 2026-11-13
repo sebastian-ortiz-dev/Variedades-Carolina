@@ -2,14 +2,17 @@ import { Outlet } from 'react-router';
 import logo from '../assets/screen.png';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { GetUserMe } from '../services/user';
+import { useQuery } from '@tanstack/react-query';
 import NavBarComponent from '../components/navBar';
 
 function NavbarNavegation(){
+    const userData = useQuery({queryKey: ['user'], queryFn: () => GetUserMe() });
     const[navHidden, setNavHidden] = useState(false);
 
     return(
         <>
-            <NavBarComponent hidden={navHidden} setHidden={setNavHidden} />
+            <NavBarComponent hidden={navHidden} setHidden={setNavHidden} userData={userData} />
 
             <header className={'h-max bg-white shadow-sm py-2 md:py-3 lg:py-3' + (navHidden ? "md:w-6.5xl md:ml-90 lg:w-6.5xl lg:ml-90": "md:w-full lg:w-full" )}>
                 <div className='flex items-center-safe md:flex md:items-center-safe lg:flex lg:items-center-safe'>
@@ -30,7 +33,7 @@ function NavbarNavegation(){
             </header>
 
             <main className={'mt-1 h-max px-5 ' + (navHidden ? "md:w-6.5xl md:ml-90 lg:w-6.5xl lg:ml-90": "md:w-full lg:w-full" )}>
-                <Outlet />
+                <Outlet context={userData} />
             </main>
         </>
     )

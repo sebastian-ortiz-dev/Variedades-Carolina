@@ -117,6 +117,7 @@ function MinimumCash({setNotification, setErrorHeader, setErrorHeaderCash}: prop
                     <span>Los precios calculados en la caja registradora se ajustarán automáticamente hacia arriba tomando como base este monto mínimo.</span>
                 </div>
             </div>
+            
             <Confirmation confirmation={confirmation} text={text} action={confirmationUpdateCash} setConfirmation={setConfirmation}/>
         </>
     )

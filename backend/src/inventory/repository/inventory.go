@@ -136,7 +136,7 @@ func PorductSearch(ctx context.Context, q string) (*[]models.Inventory, error){
 	pool := db.Getpool()
 	sql := `SELECT p.id_product_visual, p.nombre, p.imagen, p.cantidad, p.precio_compra, p.porcentaje_ganancia, c.nombre, m.nombre
 	FROM inventario.productos p LEFT JOIN inventario.categorias c ON p.id_categoria=c.id_categoria LEFT JOIN inventario.medidas m ON p.id_medida=m.id_medida
-	WHERE p.borrado = false AND p.id_product_visual ILIKE $1 OR p.nombre ILIKE $1 OR p.product_codigo_barra ILIKE $1 ORDER BY p.id_product ASC LIMIT 15`
+	WHERE p.borrado = false AND (p.id_product_visual ILIKE $1 OR p.nombre ILIKE $1 OR p.product_codigo_barra ILIKE $1) ORDER BY p.id_product ASC LIMIT 15`
 
 	rows, err := pool.Query(ctx, sql, q)
 

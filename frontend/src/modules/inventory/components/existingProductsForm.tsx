@@ -1,12 +1,10 @@
 import type { GetInventoryCatalog } from "../types/inventoryInterfaces";
-import { Minus, Package, Plus, Search, TriangleAlert, X } from "lucide-react";
+import { Minus, Package, Plus, Search, TriangleAlert, X, PackageXIcon, GlobeX } from "lucide-react";
 import { GetProducts } from "../services/inventory";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 export interface ExistingProductFieldsProps {
-  query: string;
-  setQuery: (value: string) => void;
   product: GetInventoryCatalog | null;
   setProduct: (product: GetInventoryCatalog | null) => void;
   quantity: string;
@@ -20,17 +18,26 @@ export interface ExistingProductFieldsProps {
   amount: number;
 }
 
-function ExistingProductFields({query, setQuery, product, setProduct, quantity, setQuantity, description, setDescription, isSalida, currentStock, resultingStock, insufficient, amount}: ExistingProductFieldsProps) {
+function ExistingProductFields({product, setProduct, quantity, setQuantity, description, setDescription, isSalida, currentStock, resultingStock, insufficient, amount}: ExistingProductFieldsProps) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [ref, setRef] = useState<HTMLInputElement | null>();
   const [q, setQ] = useState("");
   const productsData = useQuery({queryKey: ["products", q], queryFn: () => GetProducts(q)})
   const productsList = productsData.data ?? [];
-  
-  function temporizatorQ(q: string){
-    const timeoutId = setTimeout(() => {
-      setQ(q)
-    }, 3000);
+  console.log(productsList)
 
-    return timeoutId;
+  const putEmpty = () => {
+    const reference = inputRef.current;
+    setRef(reference)
+    if(reference != null){
+      reference.value = "";
+      setQ("");
+    }
+    return
+  }
+
+  function temporizatorQ(q: string){
+    setQ(q);
   }
 
   const decrease = () => {
@@ -81,33 +88,39 @@ function ExistingProductFields({query, setQuery, product, setProduct, quantity, 
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
 
               <input
-                value={query}
-                onChange={(event) => {const timeoutId = temporizatorQ(event.target.value); clearTimeout(timeoutId);}}
+                ref={inputRef}
+                onChange={(event) => {setTimeout(() => temporizatorQ(event.target.value), 2000); }}
                 placeholder="Buscar por nombre o código de barras..."
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 text-sm text-gray-800 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 transition-all h-11 pl-9 pr-9"
               />
 
-              {query && (
-                <button type="button" onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" aria-label="Limpiar búsqueda">
+              {ref?.value != "" && (
+                <button type="button" onClick={() => putEmpty()} className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" aria-label="Limpiar búsqueda">
                   <X className="w-4 h-4" />
                 </button>
               )}
             </div>
 
             {q.length < 2 ? (
-              <p className="text-xs text-gray-400 mt-2">
+              <p className="text-md text-gray-700 mt-2">
                 Escribe al menos 2 letras para buscar.
               </p>
             ) : productsData.isLoading ? (
               <p className="text-xs text-gray-400 mt-2">Buscando...</p>
             ) : productsData.isError ? (
-              <p className="text-xs text-red-600 mt-2">
-                No se pudo buscar productos.
-              </p>
+             <div className="flex mt-3 min-h-15 max-h-64 overflow-y-auto items-center justify-center-safe rounded-xl border border-gray-100 divide-y divide-gray-100">
+                <p className="text-md text-red-500">
+                  No se pudo buscar productos.
+                </p>
+                <GlobeX className="w-6 h-6 ml-1.5 text-red-500" />
+              </div>
             ) : productsList.length === 0 ? (
-              <p className="text-xs text-gray-400 mt-2">
-                No se encontraron productos.
-              </p>
+              <div className="flex mt-3 min-h-15 max-h-64 overflow-y-auto items-center justify-center-safe rounded-xl border border-gray-100 divide-y divide-gray-100">
+                <p className="text-md text-gray-700">
+                  No se encontraron resultados.
+                </p>
+                <PackageXIcon className="w-6 h-6 ml-1.5 text-gray-700" />
+              </div>
             ) : (
               <div className="mt-3 max-h-64 overflow-y-auto rounded-xl border border-gray-100 divide-y divide-gray-100">
                 {productsList.map((item) => (
@@ -115,7 +128,7 @@ function ExistingProductFields({query, setQuery, product, setProduct, quantity, 
                     type="button"
                     key={item.id_product_visual}
                     onClick={() => setProduct(item)}
-                    className="w-full flex items-center justify-between gap-3 p-3 text-left bg-white hover:bg-amber-50/40 transition-colors"
+                    className="cursor-pointer w-full flex items-center justify-between gap-3 p-3 text-left bg-white hover:bg-amber-50/40 transition-colors"
                   >
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-gray-800 truncate">
@@ -149,7 +162,7 @@ function ExistingProductFields({query, setQuery, product, setProduct, quantity, 
                 <button
                   type="button"
                   onClick={decrease}
-                  className="w-11 h-11 flex items-center justify-center bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors"
+                  className="cursor-pointer w-11 h-11 flex items-center justify-center bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors"
                   aria-label="Restar una unidad"
                 >
                   <Minus className="w-4 h-4" />
@@ -166,15 +179,16 @@ function ExistingProductFields({query, setQuery, product, setProduct, quantity, 
                 <button
                   type="button"
                   onClick={increase}
-                  className="w-11 h-11 flex items-center justify-center bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors"
+                  className="cursor-pointer w-11 h-11 flex items-center justify-center bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors"
                   aria-label="Sumar una unidad"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
             </div>
-
+            {isSalida}
             <div
+              
               className={`rounded-xl border p-4 ${
                 isSalida
                   ? "bg-amber-50/50 border-amber-100"

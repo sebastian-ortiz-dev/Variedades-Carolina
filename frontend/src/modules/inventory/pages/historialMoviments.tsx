@@ -11,7 +11,8 @@ export default function historialMovimientosView() {
   const [limit, setLimit] = useState(15); 
   const [moviment, setMoviment] = useState(""); 
   const todayStr = new Date().toISOString().split('T')[0];
-  const [payload, setPayload] = useState<historialParameters>({fecha_fin: todayStr, fecha_inicio: todayStr, id_tipo_movimiento: "", limit: 15, page: 1, q: ""})
+  const todaylast = `${todayStr} 23:59:59`;
+  const [payload, setPayload] = useState<historialParameters>({fecha_fin: todaylast, fecha_inicio: todayStr, id_tipo_movimiento: "", limit: 15, page: 1, q: ""})
   const historial = useQuery({queryKey: ["historial", payload], queryFn: () => GetHistorial(payload)})
   const movimentsList = useQuery({queryKey: ["moviments"], queryFn: () => GetMoviments() })
   const moviments = movimentsList.data;
@@ -41,7 +42,7 @@ export default function historialMovimientosView() {
     setPayload((prev: historialParameters) => ({
       ...prev,
       fecha_inicio: fechaDesde,
-      fecha_fin: fechaHasta,
+      fecha_fin: `${fechaHasta} 23:59:59`,
     }));
   }, [fechaDesde, fechaHasta])
 

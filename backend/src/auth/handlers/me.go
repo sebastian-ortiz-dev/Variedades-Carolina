@@ -18,24 +18,26 @@ import (
 // @Failure      500 {object} errorHttp.HttpError "Internal server error"
 // @Router       /auth/me [get]
 func Me(c *gin.Context) {
-	value, exists := c.Get("claims")
+	value, exists := c.Get("claim")
+	
 	if !exists {
 		c.Error(&errorHttp.HttpError{Status: http.StatusUnauthorized, Detail: "No autenticado", Codigo: "UNAUTHORIZED",})
 		return
 	}
 
-	claims, ok := value.(*secure.ClaimsUser)
+	claim, err :=  value.(*secure.ClaimsUser)
 
-	if !ok {
-		c.Error(&errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "No se pudieron leer los datos de la sesión", Codigo: "INTERNAL_SERVER_ERROR",})
+	if !err {
+		c.Error(&errorHttp.HttpError{Status: http.StatusBadRequest, Detail: "Los datos estan corrompidos", Codigo: "BAD_REQUEST"})
 		return
 	}
 
-	user := &DTOs.Userdata{
-		Id:    claims.UserId,
-		Name:  claims.Nombre,
-		Email: claims.Correo,
-		Rol:   claims.Rol,
+	user := DTOs.Userdata{
+		Id: claim.Subject,
+		Name: claim.Nombre,
+		Email: claim.Correo,
+		Imagen: claim.Imagen,
+		Rol: claim.Rol,
 	}
 
 	c.JSON(http.StatusOK, user)

@@ -11,6 +11,7 @@ type Userdata struct {
 	Id    string    `json:"id"`
 	Name  string `json:"name"`
 	Email string `json:"email"`
+	Imagen string `json:"imagen"`
 	Rol   string `json:"rol"`
 }
 
