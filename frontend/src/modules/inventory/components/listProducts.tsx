@@ -1,5 +1,8 @@
 import { PackageSearch, Info, Pencil, Trash2 } from "lucide-react"
+import { useOutletContext } from "react-router";
+import type { UseQueryResult } from "@tanstack/react-query";
 import { useRef, useEffect, useState } from "react";
+import type { userdata } from "../../../types/interfacesUser";
 import type { GetInventoryCatalog, ListParameters } from "../types/inventoryInterfaces";
 import { useQuery } from "@tanstack/react-query";
 import useIsVisible from "../hooks/itIsVisible";
@@ -21,6 +24,8 @@ function ListProducts({listProducts, setListProducts, payload, setPayload}: list
     const products = query.data?.products;
     const nextCursor = query.data?.nextCursor;
     const hasMore = query.data?.more;
+    const userData = useOutletContext<UseQueryResult<userdata, Error>>();
+    const rolUsuario = userData?.data?.rol ?? "Trabajador";
 
     useEffect(() => {
         return () => {
@@ -120,12 +125,16 @@ function ListProducts({listProducts, setListProducts, payload, setPayload}: list
                                 <button onClick={() => setProduct(product)} title="Editar Medida" className="cursor-pointer p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
                                     <Info className="w-4.5 h-4.5" />
                                 </button>
-                                <button title="Editar Medida" className="cursor-pointer p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                    <Pencil className="w-4.5 h-4.5" />
-                                </button>
-                                <button title="Eliminar Medida" className="cursor-pointer p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
-                                    <Trash2 className="w-4.5 h-4.5" />
-                                </button>
+                                {rolUsuario.toLowerCase() !== "trabajador" && (
+                                    <>
+                                        <button title="Editar Medida" className="cursor-pointer p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                            <Pencil className="w-4.5 h-4.5" />
+                                        </button>
+                                        <button title="Eliminar Medida" className="cursor-pointer p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
+                                            <Trash2 className="w-4.5 h-4.5" />
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
 

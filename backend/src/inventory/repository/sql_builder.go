@@ -21,6 +21,11 @@ func BuildCatalogQuery(query string, queryHas string, categoria string, LowStock
 		dataDb = append(dataDb, cursor)
 		amount += 1
 	} 
+	if LowStock == true{
+		parameter := "p.cantidad < p.cantidad_minima"
+		filtros = append(filtros, parameter)
+		filtrosHas = append(filtrosHas, parameter)
+	}
 	if categoria != ""{
 		parameter := fmt.Sprintf("c.id_categoria_visual = $%d", amount)
 		filtros = append(filtros, parameter)
@@ -31,7 +36,6 @@ func BuildCatalogQuery(query string, queryHas string, categoria string, LowStock
 		amountH += 1
 	} 
 	if q != ""{
-		fmt.Println("peru")
 		parameter := fmt.Sprintf("p.id_product_visual ILIKE $%d OR p.nombre ILIKE $%d OR p.product_codigo_barra ILIKE $%d", amount, amount, amount)
 		filtros = append(filtros, parameter)
 		filtrosHas = append(filtrosHas, parameter)
@@ -40,13 +44,9 @@ func BuildCatalogQuery(query string, queryHas string, categoria string, LowStock
 		amount += 1
 		amountH += 1
 	}
-	parameter := fmt.Sprintf("p.borrado = $%d", amount)
+	parameter := "p.borrado = false"
 	filtros = append(filtros, parameter)
 	filtrosHas = append(filtrosHas, parameter)
-	dataDb = append(dataDb, LowStock)
-	dataHas = append(dataHas, LowStock)
-	amount += 1
-	amountH += 1
 
 	build := strings.Join(filtros, " AND ")
 	buildH := strings.Join(filtrosHas, " AND ")

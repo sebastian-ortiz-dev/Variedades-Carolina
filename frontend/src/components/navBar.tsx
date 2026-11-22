@@ -1,10 +1,11 @@
-import { X, LayoutDashboard, Package, ReceiptText, UserRoundMinusIcon, Coins, Cog, ArrowLeft, LogOut } from 'lucide-react';
+import { X, LayoutDashboard, Package, ReceiptText, UserRoundMinusIcon, Coins, Cog, ArrowLeft, LogOut, TriangleAlert } from 'lucide-react';
 import React, { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from "react-router";
 import { LogOutSession } from "../services/logout";
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { userdata } from '../types/interfacesUser';
+import { GetCountInventory } from '../services/inventory';
 
 interface propHidden{
     hidden: boolean;
@@ -16,7 +17,10 @@ function NavBarComponent({ hidden, setHidden, userData }: propHidden){
     const logoutMutation = useMutation({mutationFn: LogOutSession})
     const [inventory, setInventory] = useState(false);
     const navigate = useNavigate();
+    const countData = useQuery({queryKey: ['count'], queryFn: () => GetCountInventory()})
+    const count = countData.data ?? 0;
     const user = userData.data
+    const rolUser = userData.data?.rol ?? 'Trabajador'
 
     const clearSession = async() => {
         const data = await logoutMutation.mutateAsync();
@@ -68,8 +72,9 @@ function NavBarComponent({ hidden, setHidden, userData }: propHidden){
                         </div>
                     </div>
                     <div className={'' + (inventory ? "block" : "hidden")}>
-                        <div onClick={() => navigate("/inventory/list")} className='h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
+                        <div onClick={() => navigate("/inventory/list")} className='flex justify-between h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
                             <h2 className='ml-4'>Listado de productos</h2>
+                            <TriangleAlert className={`mr-4 ` + (count > 5 ? 'text-red-500' : count < 5 ? 'text-yellow-500' : 'hidden')} />
                         </div>
                         <div onClick={() => navigate("/inventory/moviments")} className='h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
                             <h2 className='ml-4'>Movimientos</h2>
@@ -99,12 +104,14 @@ function NavBarComponent({ hidden, setHidden, userData }: propHidden){
                             <Coins />
                         </div>
                     </div>
-                    <div className='cursor-pointer w-full h-15 items-center-safe boder-t-2 border-slate-500 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-2'>
-                        <div className='inline-flex pt-4.5'>
-                            <h2 className='mr-5 ml-2'>Administración</h2>
-                            <Cog />
+                    {rolUser.toLowerCase() !== 'trabajador' && (
+                        <div className='cursor-pointer w-full h-15 items-center-safe boder-t-2 border-slate-500 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-2'>
+                            <div className='inline-flex pt-4.5'>
+                                <h2 className='mr-5 ml-2'>Administración</h2>
+                                <Cog />
+                            </div>
                         </div>
-                    </div>
+                    )}
                     <div onClick={clearSession} className='cursor-pointer w-full h-15 items-center-safe boder-t-2 border-slate-500 duration-250 hover:bg-red-500 hover:text-white hover:duration-200 hover:pl-2'>
                         <div className='inline-flex pt-4.5'>
                             <h2 className='mr-5 ml-2'>Cerrar Sesion</h2>

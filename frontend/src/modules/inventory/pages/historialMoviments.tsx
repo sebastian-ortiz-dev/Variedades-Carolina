@@ -203,8 +203,7 @@ export default function historialMovimientosView() {
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-
-            {/* Generador simple de botones de páginas 1-2-3... */}
+            
             {Array.from({ length: historial.data?.meta.total_pages ?? 0 }, (_, i) => i + 1).map((page) => {
               const isSelected = page === historial.data?.meta.current_page;
               return (
