@@ -59,5 +59,5 @@ type UpdateProduct struct{
 }
 
 type AlertCount struct{
-	Alert 			int			`json:"Alert_count"`
+	Alert 			int			`json:"alert"`
 }

@@ -18,7 +18,7 @@ function NavBarComponent({ hidden, setHidden, userData }: propHidden){
     const [inventory, setInventory] = useState(false);
     const navigate = useNavigate();
     const countData = useQuery({queryKey: ['count'], queryFn: () => GetCountInventory()})
-    const count = countData.data ?? 0;
+    const count = countData.data?.alert ?? 0;
     const user = userData.data
     const rolUser = userData.data?.rol ?? 'Trabajador'
 
@@ -74,7 +74,7 @@ function NavBarComponent({ hidden, setHidden, userData }: propHidden){
                     <div className={'' + (inventory ? "block" : "hidden")}>
                         <div onClick={() => navigate("/inventory/list")} className='flex justify-between h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
                             <h2 className='ml-4'>Listado de productos</h2>
-                            <TriangleAlert className={`mr-4 ` + (count > 5 ? 'text-red-500' : count < 5 ? 'text-yellow-500' : 'hidden')} />
+                            <TriangleAlert className={`mr-4 ` + (count > 5 ? 'text-red-500' : count < 5 && count > 0 ? 'text-yellow-500' : 'hidden')} />
                         </div>
                         <div onClick={() => navigate("/inventory/moviments")} className='h-10 cursor-pointer pt-2 duration-200 hover:duration-250 hover:bg-amber-300 hover:text-white hover:pl-6'>
                             <h2 className='ml-4'>Movimientos</h2>
