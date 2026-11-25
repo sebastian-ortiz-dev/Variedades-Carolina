@@ -26,6 +26,7 @@ const emptyDraft: NewProductDraft = {
   codigo: "",
   id_categoria: "",
   id_medida: "",
+  iva: "",
   precio_compra: "",
   porcentaje_ganancia: "",
   cantidad_minima: "0",
@@ -82,6 +83,11 @@ function MovementForm({ movement, new_product, setError, setMessage }: MovementF
       return;
     }
 
+    if (isNewProduct && !draft.iva) {
+      setError("Selecciona la alícuota de IVA.");
+      return;
+    }
+
     const payload: MovementPayload = {
       id_tipo_movimiento: movement.id,
       id_producto: isNewProduct ? "" : product?.id_product_visual ?? "",
@@ -97,6 +103,7 @@ function MovementForm({ movement, new_product, setError, setMessage }: MovementF
       payload.porcentaje_ganancia = Number(draft.porcentaje_ganancia) || 0;
       payload.id_categoria = draft.id_categoria;
       payload.id_medida = draft.id_medida;
+      payload.iva = draft.iva;
       payload.descripcion_producto = draft.descripcion_producto.trim() || undefined;
       payload.cantidad_minima = Number(draft.cantidad_minima) || 0;
     }

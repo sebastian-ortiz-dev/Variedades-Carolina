@@ -35,7 +35,7 @@ function NavBarComponent({ hidden, setHidden, userData }: propHidden){
                 <div className='w-full items-center-safe border-b-2 border-slate-300'>
                     <X onClick={() => setHidden(!hidden)} className='absolute ml-80 mt-2 md:hidden lg:hidden'/>
                     { userData.isError ? (<>    
-                        <div className='bg-red-300 border border-red-600'>
+                        <div className='bg-red-300 border border-red-600 ml-10 mt-2'>
                             <p className='text-center'>Error al cargar los datos de sesion</p> 
                         </div>   
                         </>) : 
@@ -49,10 +49,10 @@ function NavBarComponent({ hidden, setHidden, userData }: propHidden){
                         (
                             <>
                                 <div className='ml-36 mt-2'>
-                                    <img src={user?.imagen} alt={`${user?.name}_imagen`} className='w-19 h-19 border border-amber-200 rounded-[50%] text-[12px]'/>
+                                    <img src={ user?.imagen != "usuario_defecto.jpg" ? import.meta.env.VITE_IMAGES + "/users/" + user?.imagen : import.meta.env.VITE_IMAGES + "/" + user?.imagen} alt={`${user?.name}_imagen`} className='w-19 h-19 border border-amber-200 rounded-[50%] text-[12px]'/>
                                 </div>
-                                <p className='text-center'>{user?.name}</p>
-                                <p className='text-center mb-2'>{user?.rol}</p>
+                                <p className='text-center'>{user?.name ?? 'usuario'}</p>
+                                <p className='text-center mb-2'>{user?.rol ?? 'Trabajador'}</p>
                             </>
                         )
                     }

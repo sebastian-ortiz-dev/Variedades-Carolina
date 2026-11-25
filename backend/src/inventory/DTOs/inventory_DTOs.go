@@ -27,6 +27,7 @@ type GetInventoryCatalog struct{
 	Cantidad        int     	`json:"cantidad"`
 	Precio_Com      float64 	`json:"precio_compra"`
 	Porcentaje_Gan  float64 	`json:"porcentaje_ganancia"`
+	Iva 			int			`json:"iva"`
 	Categoria    	string     	`json:"categoria"`
 	Medida       	string     	`json:"medida"`
 }

@@ -8,6 +8,7 @@ export interface NewProductDraft {
   codigo: string;
   id_categoria: string;
   id_medida: string;
+  iva: string;
   precio_compra: string;
   porcentaje_ganancia: string;
   cantidad_minima: string;
@@ -26,6 +27,7 @@ export interface MovementPayload {
   porcentaje_ganancia?: number;
   id_categoria?: string;
   id_medida?: string;
+  iva?: string;
   descripcion_producto?: string;
   cantidad_minima?: number;
   imagen?: string;

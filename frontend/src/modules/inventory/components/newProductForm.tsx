@@ -2,8 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import type { NewProductDraft } from "../types/moviments";
 import type { ListCategories } from "../types/categories";
 import type { UnitOfMeasure } from "../types/measurementUnits";
+import type { ListIva } from "../types/iva";
 import { GetCategories } from "../services/categories";
 import { GetMeasurements } from "../services/measurementUnits";
+import { GetIva } from "../services/iva";
 import { Info } from "lucide-react";
 
 interface NewProductFieldsProps {
@@ -20,6 +22,8 @@ function NewProductFields({draft, updateDraft, quantity, setQuantity, descriptio
   const categorie = listCategories.data ?? [];
   const listMeasurementUnits = useQuery({queryKey: ['measurement'], queryFn: () => GetMeasurements()});
   const measurement = listMeasurementUnits.data ?? [];
+  const listIva = useQuery({queryKey: ['iva'], queryFn: () => GetIva()});
+  const alicuotas = listIva.data ?? [];
 
   return (
     <div className="space-y-5">
@@ -151,6 +155,35 @@ function NewProductFields({draft, updateDraft, quantity, setQuantity, descriptio
             placeholder="Ej: 30"
             className= "w-full bg-gray-50 border border-gray-200 rounded-xl px-3 text-sm text-gray-800 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 transition-all h-11 font-mono"
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Alícuota de IVA
+          </label>
+          <select
+            value={draft.iva}
+            onChange={(event) => updateDraft("iva", event.target.value)}
+            required
+            className= "w-full bg-gray-50 border border-gray-200 rounded-xl px-3 text-sm text-gray-800 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 transition-all h-11"
+            disabled={listIva.isLoading || listIva.isError}
+          >
+            <option value="">
+              {listIva.isLoading ? "Cargando..." : "Selecciona la alícuota"}
+            </option>
+
+            {alicuotas.map((alicuota: ListIva) => (
+              <option key={alicuota.id} value={alicuota.id}>
+                {alicuota.iva > 0 ? `${alicuota.iva}%` : "Exento (0%)"}
+              </option>
+            ))}
+          </select>
+
+          {listIva.isError &&
+            <div className="bg-red-50 p-4 rounded-2xl border border-red-200 shadow-md flex flex-col md:flex-row items-center mb-5">
+              <p className="text-md text-red-700 font-semibold flex">Error: Ha ocurrido un error con las alícuotas de IVA! Recargue la pagina o intentelo mas tarde</p>
+            </div>
+          }
         </div>
 
         <div>

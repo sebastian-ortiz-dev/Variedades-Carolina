@@ -1,5 +1,12 @@
 import { X } from "lucide-react"
-function ProductInfor({selectedProduct, setProduct}: any){
+import type { GetInventoryCatalog } from "../types/inventoryInterfaces";
+
+interface productInfoProps{
+    selectedProduct: GetInventoryCatalog | undefined;
+    setProduct: React.Dispatch<React.SetStateAction<GetInventoryCatalog | undefined>>;
+}
+
+function ProductInfor({selectedProduct, setProduct}: productInfoProps){
     return(
         <>
         {selectedProduct && (
@@ -16,16 +23,15 @@ function ProductInfor({selectedProduct, setProduct}: any){
                         <div className="space-y-3 text-sm">
                        
                             <div className="flex justify-center mb-3">
-                                <img 
-                                    src={selectedProduct.imagen} 
-                                    alt={selectedProduct.nombre} 
-                                    className="w-28 h-28 object-cover rounded-md border"
-                                />
+                                <img  src={selectedProduct.imagen != "product_defecto.jpg" ? import.meta.env.VITE_IMAGES + "/products/" + selectedProduct.imagen : import.meta.env.VITE_IMAGES + '/' + selectedProduct.imagen}  alt={"imagen_" + selectedProduct.nombre.toLocaleLowerCase().replaceAll(" ", "_").trim()}  className="w-28 h-28 object-cover rounded-md border" />
                             </div>
 
                             <div>
                                 <span className="text-xs text-slate-400 uppercase font-semibold">Nombre</span>
                                 <p className="font-medium text-slate-700">{selectedProduct.nombre}</p>
+                                <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-md ${(selectedProduct.iva ?? 0) > 0 ? "bg-blue-50 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
+                                    {(selectedProduct.iva ?? 0) > 0 ? `IVA ${selectedProduct.iva}%` : "Exento"}
+                                </span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2">

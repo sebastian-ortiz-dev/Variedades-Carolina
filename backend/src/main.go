@@ -52,6 +52,9 @@ func main(){
 		routesLogin.RegisterMe(v1)
 	}
 
+	// expose static files
+	r.Static("/uploads", "../uploads")
+
 	// run application
 	r.Run(":8082")
 	defer config.Poolglobal.Getpool().Close()

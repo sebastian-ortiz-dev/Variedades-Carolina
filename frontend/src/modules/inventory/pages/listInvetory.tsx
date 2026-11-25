@@ -11,7 +11,7 @@ function inventory(){
     const [payload, setPayload] = useState<ListParameters>({q: "", cursor: "", limit: 16, categoria: "", lowStock: lowStock});
     const listCategories = useQuery({ queryKey: ['categoriesList'], queryFn: GetCategories});
     const categories = listCategories.data;
-    
+
     return(
         <>
         <title>Inventario</title>

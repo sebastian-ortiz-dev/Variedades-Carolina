@@ -1,4 +1,6 @@
 /.env
 
+uploads/products/*
+
 /db/variedades_carolina.exe
 /src/src.exe

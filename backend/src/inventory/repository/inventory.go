@@ -15,9 +15,9 @@ import (
 func GetCatalogProduct(ctx context.Context, categoria string, LowStock bool, cursor int, limit string, q string) (*[]models.Inventory, int, bool, error){
 	db := config.Poolglobal
 	pool := db.Getpool()
-	sql := "SELECT p.id_product, p.id_product_visual, p.product_codigo_barra, p.nombre, p.imagen, p.cantidad, p.precio_compra, p.porcentaje_ganancia, c.nombre, m.nombre FROM inventario.productos p LEFT JOIN inventario.categorias c ON p.id_categoria=c.id_categoria LEFT JOIN inventario.medidas m ON p.id_medida=m.id_medida WHERE "
+	sql := "SELECT p.id_product, p.id_product_visual, p.product_codigo_barra, p.nombre, p.imagen, p.cantidad, p.precio_compra, p.porcentaje_ganancia, a.iva, c.nombre, m.nombre FROM inventario.productos p LEFT JOIN inventario.categorias c ON p.id_categoria=c.id_categoria LEFT JOIN inventario.medidas m ON p.id_medida=m.id_medida INNER JOIN inventario.alicuota a ON p.iva=a.id WHERE "
 
-	has := "SELECT p.id_product_visual FROM inventario.productos p LEFT JOIN inventario.categorias c ON p.id_categoria=c.id_categoria LEFT JOIN inventario.medidas m ON p.id_medida=m.id_medida WHERE "
+	has := "SELECT p.id_product_visual FROM inventario.productos p LEFT JOIN inventario.categorias c ON p.id_categoria=c.id_categoria LEFT JOIN inventario.medidas m ON p.id_medida=m.id_medida INNER JOIN inventario.alicuota a ON p.iva=a.id WHERE "
 	
 	queryBuild, sqlRow, dataDb, dataRow := BuildCatalogQuery(sql, has, categoria, LowStock, cursor, limit, q)
 
@@ -39,6 +39,7 @@ func GetCatalogProduct(ctx context.Context, categoria string, LowStock bool, cur
 			&product.Cantidad,
 			&product.Precio_Com,
 			&product.Porcentaje_Gan,
+			&product.Iva,
 			&product.Categoria,
 			&product.Medida,
 		)
@@ -116,7 +117,7 @@ func UpdateProduct(ctx context.Context, id string, data *DTOs.UpdateProduct, id_
 func DeleteProduct(ctx context.Context, id string)  error{
 	db := config.Poolglobal
 	pool := db.Getpool()
-	sql := `UPDATE inventario.productos SET borrado=True WHERE p.id_product_visual = $1 AND p.borrado=False`
+	sql := `UPDATE inventario.productos p SET borrado=True WHERE p.id_product_visual = $1 AND p.borrado=False`
 
 	delete, err := pool.Exec(ctx, sql, id)
 

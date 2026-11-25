@@ -23,7 +23,7 @@ func ProductCatalog(ctx context.Context, categoria string, cursorQ string, lowSt
 	var CatalogProducts []DTOs.GetInventoryCatalog
 
 	for _, current := range *products{
-		productCurrent := &DTOs.GetInventoryCatalog{IdVisual: current.IdVisual, CodeBearer: current.CodeBearer, Nombre: current.Nombre, Imagen: current.Imagen, Cantidad: current.Cantidad, Precio_Com: current.Precio_Com, Porcentaje_Gan: current.Porcentaje_Gan, Categoria: current.Categoria, Medida: current.Medida,}
+		productCurrent := &DTOs.GetInventoryCatalog{IdVisual: current.IdVisual, CodeBearer: current.CodeBearer, Nombre: current.Nombre, Imagen: current.Imagen, Cantidad: current.Cantidad, Precio_Com: current.Precio_Com, Porcentaje_Gan: current.Porcentaje_Gan, Iva: current.Iva, Categoria: current.Categoria, Medida: current.Medida,}
 		CatalogProducts = append(CatalogProducts, *productCurrent)
 	}
 	
@@ -91,9 +91,9 @@ func UpdateProductById(ctx context.Context, id string, data *DTOs.UpdateProduct)
 
 func DeleteProductById(ctx context.Context, id string) error{
 	err := repository.DeleteProduct(ctx, id)
-
+	
 	if err != nil{
-		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "El producto no fue eliminado.", Codigo:"INTERNAL_SERVER_ERROR"}
+		error_http := &errorHttp.HttpError{Status: http.StatusInternalServerError, Detail: "El producto no fue eliminado, intentelo mas tarde.", Codigo:"INTERNAL_SERVER_ERROR"}
 		return error_http
 	}
 

@@ -27,6 +27,8 @@ definitions:
         type: string
       id:
         type: string
+      imagen:
+        type: string
       name:
         type: string
       rol:
@@ -116,6 +118,8 @@ definitions:
         type: string
       imagen:
         type: string
+      iva:
+        type: integer
       medida:
         type: string
       nombre:
@@ -224,6 +228,13 @@ definitions:
         type: string
       ultimo_movimiento:
         type: boolean
+    type: object
+  variedades_carolina_src_inventory_DTOs.ListIva:
+    properties:
+      id:
+        type: string
+      iva:
+        type: integer
     type: object
   variedades_carolina_src_inventory_DTOs.ListMeasurentUnit:
     properties:
@@ -536,6 +547,27 @@ paths:
       security:
       - BearerAuth: []
       summary: Get historial records.
+      tags:
+      - Inventory
+  /inventory/iva:
+    get:
+      description: List the IVA rates available for products.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            items:
+              $ref: '#/definitions/variedades_carolina_src_inventory_DTOs.ListIva'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/variedades_carolina_src_errors.HttpError'
+      security:
+      - BearerAuth: []
+      summary: IVA rates
       tags:
       - Inventory
   /inventory/measurement-units:

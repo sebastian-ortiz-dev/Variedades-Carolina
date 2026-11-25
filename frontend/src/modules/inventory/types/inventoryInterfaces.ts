@@ -16,6 +16,7 @@ export interface GetInventoryCatalog{
 	porcentaje_ganancia:  		number;
 	categoria:    	 			string;
 	medida:       	 			string;
+	iva:						number;
 }
 
 export interface ListCatalogComplete{
@@ -23,3 +24,4 @@ export interface ListCatalogComplete{
 	nextCursor:		string;
 	more:			boolean;
 }
+

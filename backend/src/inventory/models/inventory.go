@@ -11,6 +11,7 @@ type Inventory struct {
 	Cantidad        int     	`db:"cantidad" json:"cantidad"`
 	Precio_Com      float64 	`db:"precio_compra" json:"precio_compra"`
 	Porcentaje_Gan  float64 	`db:"porcentaje_ganancia" json:"porcentaje_ganancia"`
+	Iva 			int 		`db:"iva" json:"iva"`
 	Descripcion     string  	`db:"descripcion" json:"descripcion"`
 	Categoria    	string     	`db:"id_categoria" json:"categoria"`
 	Medida       	string     	`db:"id_medida" json:"medida"`

@@ -401,6 +401,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/iva": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List the IVA rates available for products.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "IVA rates",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/variedades_carolina_src_inventory_DTOs.ListIva"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/variedades_carolina_src_errors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/measurement-units": {
             "get": {
                 "security": [
@@ -1057,6 +1091,9 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "imagen": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -1191,6 +1228,9 @@ const docTemplate = `{
                 },
                 "imagen": {
                     "type": "string"
+                },
+                "iva": {
+                    "type": "integer"
                 },
                 "medida": {
                     "type": "string"
@@ -1357,6 +1397,17 @@ const docTemplate = `{
                 },
                 "ultimo_movimiento": {
                     "type": "boolean"
+                }
+            }
+        },
+        "variedades_carolina_src_inventory_DTOs.ListIva": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "iva": {
+                    "type": "integer"
                 }
             }
         },

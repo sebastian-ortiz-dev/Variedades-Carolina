@@ -15,5 +15,6 @@ func Registerinventory(inventorygroup *gin.RouterGroup){
 		RegisterMoviments(groups)
 		RegisterMinimumCash(groups)
 		RegisterHistorial(groups)
+		RegisterIva(groups)
 	}
 }

@@ -16,3 +16,8 @@ export const GetProducts = async(payload: string): Promise<GetInventoryCatalog[]
   const data = await ApiClient.get<GetInventoryCatalog[]>(`inventory/products/search?q=${payload}`);
   return data.data;
 }
+
+export const DeleteProduct = async(payload: string) => {
+  const data = await ApiClient.delete(`inventory/products/${payload}`);
+  return data;
+}
